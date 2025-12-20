@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados - Optimizador ISC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <header class="py-4 mb-4 border-bottom">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-school fa-3x text-primary me-3"></i>
+                            <div>
+                                <h1 class="mb-0">Resultados de Optimización</h1>
+                                <p class="text-muted mb-0">Análisis Completo</p>
+                            </div>
+                        </div>
+                        <a href="/" class="btn btn-outline-primary">
+                            <i class="fas fa-home me-2"></i>Volver al Inicio
+                        </a>
+                    </div>
+                </header>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Summary Cards -->
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                        <h3 id="invalidosOptimizado" class="mb-0">0</h3>
+                        <p class="text-muted mb-0">Inválidos</p>
+                        <small class="text-success" id="invalidosMejora">+100%</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-walking fa-3x text-primary mb-3"></i>
+                        <h3 id="movimientosOptimizado" class="mb-0">-</h3>
+                        <p class="text-muted mb-0">Movimientos</p>
+                        <small class="text-success" id="movimientosMejora">-</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-building fa-3x text-warning mb-3"></i>
+                        <h3 id="pisoOptimizado" class="mb-0">-</h3>
+                        <p class="text-muted mb-0">Cambios Piso</p>
+                        <small class="text-success" id="pisoMejora">-</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-route fa-3x text-success mb-3"></i>
+                        <h3 id="distanciaOptimizado" class="mb-0">-</h3>
+                        <p class="text-muted mb-0">Distancia</p>
+                        <small class="text-success" id="distanciaMejora">-</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Charts -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Comparativa General</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chartComparativa"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Mejoras Porcentuales</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chartMejoras"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Download Section -->
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-download me-2"></i>Descargar Resultados</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <button class="btn btn-success btn-lg w-100" onclick="downloadExcel()">
+                                    <i class="fas fa-file-excel me-2"></i>Descargar Excel Optimizado
+                                </button>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <button class="btn btn-danger btn-lg w-100" onclick="downloadPDF()">
+                                    <i class="fas fa-file-pdf me-2"></i>Descargar Reporte PDF
+                                </button>
+                            </div>
+                        </div>
+                        <div class="alert alert-success mt-3">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong>Optimización completada exitosamente</strong>
+                            <p class="mb-0 mt-2">
+                                Método: <strong id="metodoUsado">-</strong> |
+                                Tiempo: <strong id="tiempoEjecucion">-</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // Get optimization ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const optId = urlParams.get('id');
+
+        // Load results
+        async function loadResults() {
+            try {
+                const response = await axios.get(`/api/history/${optId}`);
+
+                if (response.data.success) {
+                    const opt = response.data.optimization;
+                    displayResults(opt);
+                }
+            } catch (error) {
+                console.error('Error loading results:', error);
+                alert('Error al cargar resultados');
+            }
+        }
+
+        function displayResults(opt) {
+            const metrics = opt.metrics;
+
+            // Update cards
+            document.getElementById('invalidosOptimizado').textContent = metrics.invalidos.optimizado;
+            document.getElementById('invalidosMejora').textContent = `+${metrics.invalidos.mejora_pct}%`;
+
+            document.getElementById('movimientosOptimizado').textContent = metrics.movimientos.optimizado;
+            document.getElementById('movimientosMejora').textContent = `+${metrics.movimientos.mejora_pct}%`;
+
+            document.getElementById('pisoOptimizado').textContent = metrics.cambios_piso.optimizado;
+            document.getElementById('pisoMejora').textContent = `+${metrics.cambios_piso.mejora_pct}%`;
+
+            document.getElementById('distanciaOptimizado').textContent = Math.round(metrics.distancia.optimizado);
+            document.getElementById('distanciaMejora').textContent = `+${metrics.distancia.mejora_pct}%`;
+
+            document.getElementById('metodoUsado').textContent = opt.method.toUpperCase();
+            document.getElementById('tiempoEjecucion').textContent = `${opt.elapsed_time}s`;
+
+            // Create charts
+            createCharts(metrics);
+        }
+
+        function createCharts(metrics) {
+            // Comparativa Chart
+            new Chart(document.getElementById('chartComparativa'), {
+                type: 'bar',
+                data: {
+                    labels: ['Inválidos', 'Movimientos', 'Cambios Piso', 'Distancia'],
+                    datasets: [{
+                        label: 'Inicial',
+                        data: [
+                            metrics.invalidos.inicial,
+                            metrics.movimientos.inicial,
+                            metrics.cambios_piso.inicial,
+                            metrics.distancia.inicial
+                        ],
+                        backgroundColor: 'rgba(239, 68, 68, 0.5)'
+                    }, {
+                        label: 'Optimizado',
+                        data: [
+                            metrics.invalidos.optimizado,
+                            metrics.movimientos.optimizado,
+                            metrics.cambios_piso.optimizado,
+                            metrics.distancia.optimizado
+                        ],
+                        backgroundColor: 'rgba(16, 185, 129, 0.5)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+
+            // Mejoras Chart
+            new Chart(document.getElementById('chartMejoras'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Inválidos', 'Movimientos', 'Cambios Piso', 'Distancia'],
+                    datasets: [{
+                        data: [
+                            metrics.invalidos.mejora_pct,
+                            metrics.movimientos.mejora_pct,
+                            metrics.cambios_piso.mejora_pct,
+                            metrics.distancia.mejora_pct
+                        ],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.7)',
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(16, 185, 129, 0.7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        function downloadExcel() {
+            window.location.href = `/api/download/excel/${optId}`;
+        }
+
+        function downloadPDF() {
+            window.location.href = `/api/download/pdf/${optId}`;
+        }
+
+        // Load on page load
+        if (optId) {
+            loadResults();
+        } else {
+            alert('No se especificó ID de optimización');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+
+</html>

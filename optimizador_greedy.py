@@ -1,0 +1,335 @@
+#!/usr/bin/env python3
+"""
+Optimizador Greedy + Hill Climbing - Sistema de Salones ISC
+Rápido y efectivo: construcción voraz + búsqueda local
+"""
+
+import pandas as pd
+import numpy as np
+import random
+from typing import Dict, List, Tuple
+import sys
+import os
+
+# Importar analizador de movimientos
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from analizar_movimientos import AnalizadorMovimientos
+
+class OptimizadorGreedyHC:
+    def __init__(self, max_iter_hc=100, verbose=True):
+        """
+        Optimizador Greedy + Hill Climbing
+        
+        Args:
+            max_iter_hc: Iteraciones de hill climbing
+            verbose: Mostrar progreso
+        """
+        self.max_iter_hc = max_iter_hc
+        self.verbose = verbose
+        
+        # Catálogos (CORREGIDOS - basados en datos reales)
+        self.salones_invalidos = {'AV1', 'AV2', 'AV4', 'AV5', 'E11'}
+        self.laboratorios = {'LBD', 'LBD2', 'LCA', 'LCG1', 'LCG2', 'LIA', 'LR', 'LSO'}
+        self.salones_teoria = {'FF1', 'FF2', 'FF3', 'FF4', 'FF5', 'FF6', 'FF7', 'FF8', 'FF9', 'FFA', 'FFB', 'FFC', 'FFD'}
+        self.todos_salones = self.salones_teoria | self.laboratorios
+        
+        # Matriz de distancias
+        self.matriz_distancias = self._crear_matriz_distancias()
+        
+    def _crear_matriz_distancias(self) -> Dict:
+        """Crea matriz de distancias entre salones"""
+        distancias = {}
+        
+        # FF entre sí
+        salones_ff = ['FF1', 'FF2', 'FF3', 'FF4', 'FF5', 'FF6', 'FF7', 'FF8', 'FF9', 'FFA', 'FFB', 'FFC', 'FFD']
+        for i, s1 in enumerate(salones_ff):
+            for j, s2 in enumerate(salones_ff):
+                distancias[(s1, s2)] = abs(i - j) * 5
+        
+        # FF a Labs
+        labs = list(self.laboratorios)
+        for s1 in salones_ff:
+            for s2 in labs:
+                distancias[(s1, s2)] = 50
+                distancias[(s2, s1)] = 50
+        
+        # Labs entre sí
+        for i, s1 in enumerate(labs):
+            for j, s2 in enumerate(labs):
+                distancias[(s1, s2)] = abs(i - j) * 8
+        
+        return distancias
+    
+    def _log(self, mensaje: str):
+        if self.verbose:
+            print(mensaje)
+    
+    def calcular_energia(self, solucion: Dict, df: pd.DataFrame) -> float:
+        """Calcula energía de la solución"""
+        energia = 0
+        
+        # Inválidos
+        invalidos = sum(1 for s in solucion.values() if s in self.salones_invalidos)
+        energia += invalidos * 10000
+        
+        # Conflictos
+        ocupacion = {}
+        for idx, salon in solucion.items():
+            key = (df.loc[idx]['Dia'], df.loc[idx]['Bloque_Horario'], salon)
+            if key in ocupacion:
+                energia += 5000
+            ocupacion[key] = idx
+        
+        # Movimientos y distancia
+        for profesor in df['Profesor'].unique():
+            clases = df[df['Profesor'] == profesor].sort_values(['Dia', 'Bloque_Horario']).index
+            for i in range(len(clases) - 1):
+                s1, s2 = solucion[clases[i]], solucion[clases[i+1]]
+                if s1 != s2:
+                    energia += 10
+                    energia += self.matriz_distancias.get((s1, s2), 50)
+        
+        return energia
+    
+    def construccion_greedy(self, df: pd.DataFrame) -> Dict:
+        """Fase 1: Construcción voraz"""
+        self._log("\n📊 Fase 1: Construcción Greedy...")
+        solucion = {}
+        ocupacion = {}  # (dia, bloque, salon) -> idx
+        
+        # Ordenar asignaciones por prioridad
+        df_sorted = df.copy()
+        df_sorted['prioridad'] = 0
+        
+        # Prioridad 1: Primer semestre
+        df_sorted.loc[df_sorted['Grupo'].str[0] == '1', 'prioridad'] = 3
+        
+        # Prioridad 2: Labs
+        df_sorted.loc[df_sorted['Materia'].str.contains('LAB', case=False, na=False), 'prioridad'] += 2
+        
+        df_sorted = df_sorted.sort_values('prioridad', ascending=False)
+        
+        # Asignar vorazmente
+        for idx, row in df_sorted.iterrows():
+            materia = row['Materia']
+            dia = row['Dia']
+            bloque = row['Bloque_Horario']
+            profesor = row['Profesor']
+            
+            # Determinar salones candidatos basado en Tipo_Salon
+            requiere_lab = row['Tipo_Salon'] == 'Laboratorio'
+            candidatos = list(self.laboratorios if requiere_lab else self.salones_teoria)
+            
+            # Evaluar candidatos
+            mejor_salon = None
+            mejor_score = float('-inf')
+            
+            for salon in candidatos:
+                # Verificar disponibilidad
+                if (dia, bloque, salon) in ocupacion:
+                    continue
+                
+                # Calcular score
+                score = 0
+                
+                # Preferir salones cercanos a clases anteriores del profesor
+                clases_anteriores = [solucion[i] for i in solucion if df.loc[i]['Profesor'] == profesor]
+                if clases_anteriores:
+                    dist_promedio = np.mean([self.matriz_distancias.get((salon, s), 50) for s in clases_anteriores])
+                    score -= dist_promedio
+                
+                # Preferir salones menos usados (balancear)
+                uso = sum(1 for s in solucion.values() if s == salon)
+                score -= uso * 2
+                
+                if score > mejor_score:
+                    mejor_score = score
+                    mejor_salon = salon
+            
+            # Si no hay salón disponible, usar cualquiera
+            if mejor_salon is None:
+                mejor_salon = random.choice(candidatos)
+            
+            solucion[idx] = mejor_salon
+            ocupacion[(dia, bloque, mejor_salon)] = idx
+        
+        energia_inicial = self.calcular_energia(solucion, df)
+        self._log(f"   Energía inicial: {energia_inicial:.0f}")
+        
+        return solucion
+    
+    def hill_climbing(self, solucion: Dict, df: pd.DataFrame) -> Dict:
+        """Fase 2: Mejora por Hill Climbing"""
+        self._log("\n🔺 Fase 2: Hill Climbing...")
+        
+        mejor_solucion = solucion.copy()
+        mejor_energia = self.calcular_energia(mejor_solucion, df)
+        
+        sin_mejora = 0
+        
+        for iteracion in range(self.max_iter_hc):
+            mejoro = False
+            
+            # Probar swaps aleatorios
+            indices = list(solucion.keys())
+            for _ in range(50):  # 50 swaps por iteración
+                idx1, idx2 = random.sample(indices, 2)
+                
+                # Crear vecino
+                vecino = mejor_solucion.copy()
+                vecino[idx1], vecino[idx2] = vecino[idx2], vecino[idx1]
+                
+                # Evaluar
+                energia = self.calcular_energia(vecino, df)
+                
+                if energia < mejor_energia:
+                    mejor_solucion = vecino
+                    mejor_energia = energia
+                    mejoro = True
+                    sin_mejora = 0
+                    break
+            
+            if not mejoro:
+                sin_mejora += 1
+                if sin_mejora >= 10:  # Early stopping
+                    self._log(f"   Convergió en iteración {iteracion}")
+                    break
+            
+            if (iteracion + 1) % 20 == 0:
+                self._log(f"   Iter {iteracion+1}: Energía = {mejor_energia:.0f}")
+        
+        self._log(f"   Energía final: {mejor_energia:.0f}")
+        return mejor_solucion
+    
+    def optimizar(self, df: pd.DataFrame) -> Tuple[Dict, float]:
+        """Ejecuta optimización completa"""
+        self._log("\n" + "="*80)
+        self._log("⚡ GREEDY + HILL CLIMBING - OPTIMIZACIÓN RÁPIDA")
+        self._log("="*80)
+        
+        # Fase 1: Greedy
+        solucion = self.construccion_greedy(df)
+        
+        # Fase 2: Hill Climbing
+        solucion = self.hill_climbing(solucion, df)
+        
+        energia_final = self.calcular_energia(solucion, df)
+        
+        self._log("\n" + "="*80)
+        self._log("✅ OPTIMIZACIÓN COMPLETADA")
+        self._log("="*80)
+        
+        return solucion, energia_final
+
+def main():
+    """Función principal"""
+    print("\n⚡ Optimizador Greedy + Hill Climbing - Sistema de Salones ISC")
+    print("="*80)
+    print("Método: Construcción Voraz + Búsqueda Local (Rápido)")
+    print("="*80)
+    
+    # Cargar datos
+    csv_inicial = "/Users/lic.ing.jesusolvera/Documents/PROYECTOS PERSONALES/Sistema-Salones-ISC/datos_estructurados/01_Horario_Inicial.csv"
+    df_inicial = pd.read_csv(csv_inicial)
+    
+    # Crear optimizador
+    optimizador = OptimizadorGreedyHC(max_iter_hc=100, verbose=True)
+    
+    # Optimizar
+    mejor_solucion, mejor_energia = optimizador.optimizar(df_inicial)
+    
+    # Aplicar solución
+    df_resultado = df_inicial.copy()
+    df_resultado['Salon'] = df_resultado.index.map(mejor_solucion)
+    
+    # Actualizar Es_Invalido, Tipo_Salon y Piso
+    for idx in df_resultado.index:
+        salon = df_resultado.loc[idx, 'Salon']
+        
+        # Actualizar Es_Invalido
+        df_resultado.loc[idx, 'Es_Invalido'] = 1 if salon in optimizador.salones_invalidos else 0
+        
+        # Actualizar Tipo_Salon y Piso
+        if salon in optimizador.laboratorios:
+            df_resultado.loc[idx, 'Tipo_Salon'] = 'Laboratorio'
+            # Determinar piso del lab
+            if salon in ['LR', 'LSO', 'LIA', 'LCG1', 'LCG2']:
+                df_resultado.loc[idx, 'Piso'] = 'Primer Piso'
+            else:
+                df_resultado.loc[idx, 'Piso'] = 'Segundo Piso'
+        elif salon in optimizador.salones_teoria:
+            df_resultado.loc[idx, 'Tipo_Salon'] = 'Teoría'
+            # Determinar piso FF
+            if salon in ['FF1', 'FF2', 'FF3', 'FF4', 'FF5', 'FF6', 'FF7']:
+                df_resultado.loc[idx, 'Piso'] = 'Planta Baja'
+            else:
+                df_resultado.loc[idx, 'Piso'] = 'Planta Alta'
+        else:
+            # Salón inválido
+            df_resultado.loc[idx, 'Tipo_Salon'] = 'INVÁLIDO'
+    
+    # Analizar movimientos
+    print("\n📊 Analizando movimientos de profesores...")
+    analizador = AnalizadorMovimientos()
+    
+    metricas_inicial = analizador.analizar_todos_profesores(df_inicial)
+    metricas_optimizado = analizador.analizar_todos_profesores(df_resultado)
+    
+    # Mostrar resultados
+    print("\n" + "="*80)
+    print("📈 RESULTADOS FINALES")
+    print("="*80)
+    
+    print("\n🚶 Movimientos de Profesores:")
+    print(f"   Inicial:    {metricas_inicial['agregado']['total_movimientos']} movimientos")
+    print(f"   Optimizado: {metricas_optimizado['agregado']['total_movimientos']} movimientos")
+    mejora_mov = metricas_inicial['agregado']['total_movimientos'] - metricas_optimizado['agregado']['total_movimientos']
+    pct_mov = (mejora_mov / metricas_inicial['agregado']['total_movimientos']) * 100 if metricas_inicial['agregado']['total_movimientos'] > 0 else 0
+    print(f"   Mejora:     {'+' if mejora_mov > 0 else ''}{mejora_mov} ({'+' if pct_mov > 0 else ''}{pct_mov:.1f}%)")
+    
+    print("\n🏢 Cambios de Piso:")
+    print(f"   Inicial:    {metricas_inicial['agregado']['total_cambios_piso']} cambios")
+    print(f"   Optimizado: {metricas_optimizado['agregado']['total_cambios_piso']} cambios")
+    mejora_piso = metricas_inicial['agregado']['total_cambios_piso'] - metricas_optimizado['agregado']['total_cambios_piso']
+    pct_piso = (mejora_piso / metricas_inicial['agregado']['total_cambios_piso']) * 100 if metricas_inicial['agregado']['total_cambios_piso'] > 0 else 0
+    print(f"   Mejora:     {'+' if mejora_piso > 0 else ''}{mejora_piso} ({'+' if pct_piso > 0 else ''}{pct_piso:.1f}%)")
+    
+    print("\n📏 Distancia Total:")
+    print(f"   Inicial:    {metricas_inicial['agregado']['total_distancia']:.0f} unidades")
+    print(f"   Optimizado: {metricas_optimizado['agregado']['total_distancia']:.0f} unidades")
+    mejora_dist = metricas_inicial['agregado']['total_distancia'] - metricas_optimizado['agregado']['total_distancia']
+    pct_dist = (mejora_dist / metricas_inicial['agregado']['total_distancia']) * 100 if metricas_inicial['agregado']['total_distancia'] > 0 else 0
+    print(f"   Mejora:     {'+' if mejora_dist > 0 else ''}{mejora_dist:.0f} ({'+' if pct_dist > 0 else ''}{pct_dist:.1f}%)")
+    
+    # Guardar resultado
+    output_path = "/Users/lic.ing.jesusolvera/Documents/PROYECTOS PERSONALES/Sistema-Salones-ISC/datos_estructurados/04_Horario_Optimizado_Greedy.csv"
+    df_resultado.to_csv(output_path, index=False)
+    print(f"\n💾 Resultado guardado: {output_path}")
+    
+    # Guardar métricas
+    os.makedirs("/Users/lic.ing.jesusolvera/Documents/PROYECTOS PERSONALES/Sistema-Salones-ISC/comparativas/04_inicial_vs_greedy", exist_ok=True)
+    metricas_path = "/Users/lic.ing.jesusolvera/Documents/PROYECTOS PERSONALES/Sistema-Salones-ISC/comparativas/04_inicial_vs_greedy/metricas_movimientos.csv"
+    
+    metricas_df = pd.DataFrame({
+        'Metrica': ['Movimientos Totales', 'Cambios de Piso', 'Distancia Total'],
+        'Inicial': [
+            metricas_inicial['agregado']['total_movimientos'], 
+            metricas_inicial['agregado']['total_cambios_piso'], 
+            metricas_inicial['agregado']['total_distancia']
+        ],
+        'Optimizado': [
+            metricas_optimizado['agregado']['total_movimientos'], 
+            metricas_optimizado['agregado']['total_cambios_piso'], 
+            metricas_optimizado['agregado']['total_distancia']
+        ]
+    })
+    metricas_df.to_csv(metricas_path, index=False)
+    print(f"💾 Métricas guardadas: {metricas_path}")
+    
+    print("\n" + "="*80)
+    print("✅ PROCESO COMPLETADO")
+    print("="*80)
+    print("\n📊 Próximo paso: Generar comparativa completa\n")
+
+if __name__ == "__main__":
+    main()

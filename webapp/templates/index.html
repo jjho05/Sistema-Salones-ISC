@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimizador de Salones ISC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Header -->
+            <div class="col-12">
+                <header class="py-4 mb-4 border-bottom">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-school fa-3x text-primary me-3"></i>
+                        <div>
+                            <h1 class="mb-0">Optimizador de Salones ISC</h1>
+                            <p class="text-muted mb-0">Sistema Inteligente de Optimización de Horarios</p>
+                        </div>
+                    </div>
+                </header>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- Upload Section -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-upload me-2"></i>Subir Horario</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="dropZone" class="drop-zone text-center p-5 mb-3">
+                            <i class="fas fa-cloud-upload-alt fa-4x text-muted mb-3"></i>
+                            <h5>Arrastra tu archivo Excel aquí</h5>
+                            <p class="text-muted">o haz clic para seleccionar</p>
+                            <input type="file" id="fileInput" accept=".xlsx,.xls" class="d-none">
+                            <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-folder-open me-2"></i>Seleccionar Archivo
+                            </button>
+                        </div>
+
+                        <div id="fileInfo" class="d-none">
+                            <div class="alert alert-info">
+                                <i class="fas fa-file-excel me-2"></i>
+                                <strong>Archivo:</strong> <span id="fileName"></span>
+                                <span class="badge bg-success ms-2" id="fileSize"></span>
+                            </div>
+                        </div>
+
+                        <div id="detectionResult" class="d-none">
+                            <h6 class="mb-3">Detección Automática de Columnas</h6>
+                            <div class="progress mb-3" style="height: 25px;">
+                                <div id="confidenceBar" class="progress-bar" role="progressbar" style="width: 0%">
+                                    <span id="confidenceText"></span>
+                                </div>
+                            </div>
+                            <div id="mappingPreview" class="table-responsive">
+                                <!-- Tabla de mapeo se genera dinámicamente -->
+                            </div>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                                <button class="btn btn-outline-secondary" onclick="showMapper()">
+                                    <i class="fas fa-edit me-2"></i>Editar Mapeo
+                                </button>
+                                <button class="btn btn-primary" onclick="proceedToOptimize()">
+                                    <i class="fas fa-arrow-right me-2"></i>Continuar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Optimization Options -->
+                <div id="optimizationSection" class="card shadow-sm mb-4 d-none">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Opciones de Optimización</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="mb-3">Selecciona el método de optimización:</h6>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="method-card active" data-method="greedy" onclick="selectMethod('greedy')">
+                                    <div class="method-icon">
+                                        <i class="fas fa-bolt"></i>
+                                    </div>
+                                    <h6>Greedy + Hill Climbing</h6>
+                                    <p class="small text-muted">Rápido y efectivo</p>
+                                    <div class="badge bg-success">Recomendado</div>
+                                    <div class="small mt-2">
+                                        <i class="fas fa-clock me-1"></i>< 2 min
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="method-card" data-method="ml" onclick="selectMethod('ml')">
+                                    <div class="method-icon">
+                                        <i class="fas fa-brain"></i>
+                                    </div>
+                                    <h6>Machine Learning</h6>
+                                    <p class="small text-muted">Aprende de datos</p>
+                                    <div class="small mt-2">
+                                        <i class="fas fa-clock me-1"></i>~2 min
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="method-card" data-method="genetic" onclick="selectMethod('genetic')">
+                                    <div class="method-icon">
+                                        <i class="fas fa-dna"></i>
+                                    </div>
+                                    <h6>Algoritmo Genético</h6>
+                                    <p class="small text-muted">Evolución iterativa</p>
+                                    <div class="small mt-2">
+                                        <i class="fas fa-clock me-1"></i>~3 min
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button id="optimizeBtn" class="btn btn-success btn-lg" onclick="startOptimization()">
+                                <i class="fas fa-rocket me-2"></i>Optimizar Horario
+                            </button>
+                        </div>
+
+                        <div id="optimizationProgress" class="mt-4 d-none">
+                            <div class="text-center">
+                                <div class="spinner-border text-success" role="status">
+                                    <span class="visually-hidden">Optimizando...</span>
+                                </div>
+                                <p class="mt-3">Optimizando horario...</p>
+                                <p class="text-muted small" id="progressText">Esto puede tomar unos momentos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- History -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-history me-2"></i>Historial</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="historyList">
+                            <p class="text-muted text-center">No hay optimizaciones previas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Información</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>¿Cómo funciona?</h6>
+                        <ol class="small">
+                            <li>Sube tu archivo Excel con el horario</li>
+                            <li>El sistema detecta automáticamente las columnas</li>
+                            <li>Selecciona el método de optimización</li>
+                            <li>Descarga el horario optimizado</li>
+                        </ol>
+                        <hr>
+                        <h6>Formatos soportados</h6>
+                        <p class="small mb-0">
+                            <i class="fas fa-check text-success me-2"></i>.xlsx (Excel 2007+)<br>
+                            <i class="fas fa-check text-success me-2"></i>.xls (Excel 97-2003)
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

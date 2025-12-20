@@ -1,0 +1,121 @@
+/* Main Styles - Optimizador de Salones ISC */
+
+:root {
+    --primary: #2563eb;
+    --success: #10b981;
+    --info: #06b6d4;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container-fluid {
+    background: white;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Drop Zone */
+.drop-zone {
+    border: 3px dashed #cbd5e1;
+    border-radius: 12px;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.drop-zone:hover {
+    border-color: var(--primary);
+    background: #eff6ff;
+}
+
+.drop-zone.drag-over {
+    border-color: var(--success);
+    background: #f0fdf4;
+    transform: scale(1.02);
+}
+
+/* Method Cards */
+.method-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.method-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.method-card.active {
+    border-color: var(--success);
+    background: #f0fdf4;
+}
+
+.method-icon {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.method-card.active .method-icon {
+    color: var(--success);
+}
+
+/* History Items */
+.history-item {
+    border-left: 4px solid var(--primary);
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #f8fafc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.history-item:hover {
+    background: #eff6ff;
+    transform: translateX(5px);
+}
+
+/* Progress Bar */
+.progress-bar {
+    transition: width 0.6s ease;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 12px;
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .method-card {
+        margin-bottom: 15px;
+    }
+}

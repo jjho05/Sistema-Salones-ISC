@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapeo de Columnas - Optimizador ISC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-columns me-2"></i>Mapeo Manual de Columnas</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Arrastra las columnas del Excel a los campos requeridos</p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Columnas del Excel</h5>
+                        <div id="excelColumns" class="border p-3 rounded bg-light">
+                            <!-- Se llena dinámicamente -->
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Campos Requeridos</h5>
+                        <div id="requiredFields" class="border p-3 rounded">
+                            <!-- Se llena dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <button class="btn btn-outline-secondary" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
+                    </button>
+                    <button class="btn btn-primary" onclick="saveMapping()">
+                        <i class="fas fa-save me-2"></i>Guardar y Continuar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Placeholder for mapper functionality
+        // This would use SortableJS for drag & drop
+        console.log('Mapper page loaded');
+    </script>
+</body>
+
+</html>
