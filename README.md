@@ -289,7 +289,7 @@ Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
 ## 📞 Contacto
 
 - Email: lic.ing.jesusolvera@gmail.com
-- GitHub: [@jesusolvera](https://github.com/jesusolvera)
+- GitHub: [@jjho05](https://github.com/jjho05)
 
 ---
 
