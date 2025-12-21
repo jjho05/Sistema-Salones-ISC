@@ -2,6 +2,7 @@
 """
 Optimizador Greedy + Hill Climbing - Sistema de Salones ISC
 Rápido y efectivo: construcción voraz + búsqueda local
+ACTUALIZADO: Integra restricciones de teoría/lab y preferencias de profesores
 """
 
 import pandas as pd
@@ -11,9 +12,16 @@ from typing import Dict, List, Tuple
 import sys
 import os
 
-# Importar analizador de movimientos
+# Importar analizador de movimientos y utilidades
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from analizar_movimientos import AnalizadorMovimientos
+from utils_restricciones import (
+    cargar_configuraciones,
+    determinar_tipo_hora,
+    obtener_preferencia_profesor,
+    es_preferencia_prioritaria,
+    filtrar_salones_por_tipo
+)
 
 class OptimizadorGreedyHC:
     def __init__(self, max_iter_hc=100, verbose=True):
@@ -26,6 +34,10 @@ class OptimizadorGreedyHC:
         """
         self.max_iter_hc = max_iter_hc
         self.verbose = verbose
+        
+        # Cargar configuraciones de restricciones
+        self._log("📂 Cargando configuraciones de restricciones...")
+        self.config_materias, self.preferencias_profesores = cargar_configuraciones()
         
         # Catálogos (CORREGIDOS - basados en datos reales)
         self.salones_invalidos = {'AV1', 'AV2', 'AV4', 'AV5', 'E11'}
@@ -65,37 +77,72 @@ class OptimizadorGreedyHC:
             print(mensaje)
     
     def calcular_energia(self, solucion: Dict, df: pd.DataFrame) -> float:
-        """Calcula energía de la solución"""
+        """Calcula energía de la solución (menor es mejor)"""
         energia = 0
         
-        # Inválidos
-        invalidos = sum(1 for s in solucion.values() if s in self.salones_invalidos)
-        energia += invalidos * 10000
+        # Rastrear horas asignadas por materia
+        horas_asignadas = {}
         
-        # Conflictos
+        for idx, salon in solucion.items():
+            row = df.loc[idx]
+            profesor = row['Profesor']
+            grupo = row['Grupo']
+            materia = row['Materia']
+            
+            # Determinar tipo de hora
+            key = (grupo, materia)
+            indice_hora = horas_asignadas.get(key, 0)
+            tipo_requerido = determinar_tipo_hora(materia, indice_hora, self.config_materias)
+            horas_asignadas[key] = indice_hora + 1
+            
+            # Penalización por asignación inválida (salón no válido)
+            if salon in self.salones_invalidos:
+                energia += 1000
+            
+            # Penalización por tipo incorrecto (teoría en lab o viceversa)
+            es_lab = salon in self.laboratorios
+            requiere_lab = tipo_requerido == 'Laboratorio'
+            if es_lab != requiere_lab:
+                energia += 500  # Penalización fuerte por tipo incorrecto
+            
+            # Penalización por violar preferencias prioritarias
+            pref_salon = obtener_preferencia_profesor(profesor, tipo_requerido, self.preferencias_profesores)
+            es_prioritaria = es_preferencia_prioritaria(profesor, tipo_requerido, self.preferencias_profesores)
+            
+            if es_prioritaria and pref_salon and pref_salon != salon:
+                energia += 300  # Penalización muy fuerte por violar preferencia prioritaria
+            elif pref_salon and pref_salon != salon:
+                energia += 20  # Penalización leve por no respetar preferencia opcional
+        
+        # Calcular movimientos de profesores
+        for profesor in df['Profesor'].unique():
+            clases_profesor = df[df['Profesor'] == profesor].index
+            salones_profesor = [solucion[i] for i in clases_profesor if i in solucion]
+            
+            # Contar cambios de salón
+            for i in range(len(salones_profesor) - 1):
+                if salones_profesor[i] != salones_profesor[i+1]:
+                    dist = self.matriz_distancias.get((salones_profesor[i], salones_profesor[i+1]), 50)
+                    energia += dist * 0.5
+        
+        # Conflictos de ocupación (dos clases en el mismo lugar a la misma hora)
         ocupacion = {}
         for idx, salon in solucion.items():
             key = (df.loc[idx]['Dia'], df.loc[idx]['Bloque_Horario'], salon)
             if key in ocupacion:
-                energia += 5000
+                energia += 5000  # Penalización muy alta por conflicto
             ocupacion[key] = idx
-        
-        # Movimientos y distancia
-        for profesor in df['Profesor'].unique():
-            clases = df[df['Profesor'] == profesor].sort_values(['Dia', 'Bloque_Horario']).index
-            for i in range(len(clases) - 1):
-                s1, s2 = solucion[clases[i]], solucion[clases[i+1]]
-                if s1 != s2:
-                    energia += 10
-                    energia += self.matriz_distancias.get((s1, s2), 50)
         
         return energia
     
     def construccion_greedy(self, df: pd.DataFrame) -> Dict:
-        """Fase 1: Construcción voraz"""
-        self._log("\n📊 Fase 1: Construcción Greedy...")
+        """Fase 1: Construcción voraz con restricciones"""
+        self._log("\n📊 Fase 1: Construcción Greedy (con restricciones)...")
         solucion = {}
         ocupacion = {}  # (dia, bloque, salon) -> idx
+        
+        # Rastrear horas asignadas por materia para determinar tipo
+        horas_asignadas = {}  # (grupo, materia) -> contador
         
         # Ordenar asignaciones por prioridad
         df_sorted = df.copy()
@@ -104,21 +151,42 @@ class OptimizadorGreedyHC:
         # Prioridad 1: Primer semestre
         df_sorted.loc[df_sorted['Grupo'].str[0] == '1', 'prioridad'] = 3
         
-        # Prioridad 2: Labs
-        df_sorted.loc[df_sorted['Materia'].str.contains('LAB', case=False, na=False), 'prioridad'] += 2
+        # Prioridad 2: Labs (basado en Tipo_Salon original)
+        df_sorted.loc[df_sorted['Tipo_Salon'] == 'Laboratorio', 'prioridad'] += 2
         
         df_sorted = df_sorted.sort_values('prioridad', ascending=False)
         
         # Asignar vorazmente
         for idx, row in df_sorted.iterrows():
             materia = row['Materia']
+            grupo = row['Grupo']
             dia = row['Dia']
             bloque = row['Bloque_Horario']
             profesor = row['Profesor']
             
-            # Determinar salones candidatos basado en Tipo_Salon
-            requiere_lab = row['Tipo_Salon'] == 'Laboratorio'
-            candidatos = list(self.laboratorios if requiere_lab else self.salones_teoria)
+            # Determinar tipo de hora requerido
+            key = (grupo, materia)
+            indice_hora = horas_asignadas.get(key, 0)
+            tipo_requerido = determinar_tipo_hora(materia, indice_hora, self.config_materias)
+            horas_asignadas[key] = indice_hora + 1
+            
+            # Filtrar candidatos por tipo
+            if tipo_requerido == 'Laboratorio':
+                candidatos = list(self.laboratorios)
+            else:
+                candidatos = list(self.salones_teoria)
+            
+            # Verificar preferencia del profesor
+            pref_salon = obtener_preferencia_profesor(profesor, tipo_requerido, self.preferencias_profesores)
+            es_prioritaria = es_preferencia_prioritaria(profesor, tipo_requerido, self.preferencias_profesores)
+            
+            # Si hay preferencia prioritaria, intentar usarla
+            if es_prioritaria and pref_salon and pref_salon in candidatos:
+                if (dia, bloque, pref_salon) not in ocupacion:
+                    # Usar salón prioritario
+                    solucion[idx] = pref_salon
+                    ocupacion[(dia, bloque, pref_salon)] = idx
+                    continue
             
             # Evaluar candidatos
             mejor_salon = None
@@ -131,6 +199,10 @@ class OptimizadorGreedyHC:
                 
                 # Calcular score
                 score = 0
+                
+                # Bonificación por preferencia del profesor
+                if pref_salon == salon:
+                    score += 50  # Bonificación fuerte por preferencia
                 
                 # Preferir salones cercanos a clases anteriores del profesor
                 clases_anteriores = [solucion[i] for i in solucion if df.loc[i]['Profesor'] == profesor]
@@ -146,9 +218,14 @@ class OptimizadorGreedyHC:
                     mejor_score = score
                     mejor_salon = salon
             
-            # Si no hay salón disponible, usar cualquiera
+            # Si no hay salón disponible, usar cualquiera del tipo correcto
             if mejor_salon is None:
-                mejor_salon = random.choice(candidatos)
+                disponibles = [s for s in candidatos if (dia, bloque, s) not in ocupacion]
+                if disponibles:
+                    mejor_salon = random.choice(disponibles)
+                else:
+                    # Último recurso: usar cualquier salón del tipo
+                    mejor_salon = random.choice(candidatos)
             
             solucion[idx] = mejor_salon
             ocupacion[(dia, bloque, mejor_salon)] = idx
@@ -159,21 +236,39 @@ class OptimizadorGreedyHC:
         return solucion
     
     def hill_climbing(self, solucion: Dict, df: pd.DataFrame) -> Dict:
-        """Fase 2: Mejora por Hill Climbing"""
+        """Fase 2: Mejora por Hill Climbing (respetando restricciones)"""
         self._log("\n🔺 Fase 2: Hill Climbing...")
         
         mejor_solucion = solucion.copy()
         mejor_energia = self.calcular_energia(mejor_solucion, df)
+        
+        # Rastrear horas asignadas para determinar tipos
+        horas_asignadas = {}
+        tipos_por_idx = {}
+        
+        for idx in solucion.keys():
+            row = df.loc[idx]
+            grupo = row['Grupo']
+            materia = row['Materia']
+            key = (grupo, materia)
+            indice_hora = horas_asignadas.get(key, 0)
+            tipo = determinar_tipo_hora(materia, indice_hora, self.config_materias)
+            horas_asignadas[key] = indice_hora + 1
+            tipos_por_idx[idx] = tipo
         
         sin_mejora = 0
         
         for iteracion in range(self.max_iter_hc):
             mejoro = False
             
-            # Probar swaps aleatorios
+            # Probar swaps aleatorios (solo del mismo tipo)
             indices = list(solucion.keys())
-            for _ in range(50):  # 50 swaps por iteración
+            for _ in range(50):  # 50 intentos por iteración
                 idx1, idx2 = random.sample(indices, 2)
+                
+                # Solo intercambiar si son del mismo tipo
+                if tipos_por_idx[idx1] != tipos_por_idx[idx2]:
+                    continue
                 
                 # Crear vecino
                 vecino = mejor_solucion.copy()

@@ -1,0 +1,62 @@
+{
+  "PROFESOR 10": {
+    "salon_teoria": "FF7",
+    "prioridad_teoria": "Prioritario",
+    "salon_lab": "LCA",
+    "prioridad_lab": "Prioritario"
+  },
+  "PROFESOR 20": {
+    "salon_teoria": "FF7",
+    "prioridad_teoria": "Prioritario",
+    "salon_lab": "LR",
+    "prioridad_lab": "Prioritario"
+  },
+  "PROFESOR 21": {
+    "salon_teoria": "FFA",
+    "prioridad_teoria": "Prioritario",
+    "salon_lab": "LSO",
+    "prioridad_lab": "Prioritario"
+  },
+  "PROFESOR 26": {
+    "salon_teoria": "FF9",
+    "prioridad_teoria": "Prioritario",
+    "salon_lab": "Sin preferencia",
+    "prioridad_lab": "Opcional"
+  },
+  "PROFESOR 3": {
+    "salon_teoria": "FF3",
+    "prioridad_teoria": "Prioritario",
+    "salon_lab": "Sin preferencia",
+    "prioridad_lab": "Opcional"
+  },
+  "PROFESOR 33": {
+    "salon_teoria": "FF6",
+    "prioridad_teoria": "Prioritario",
+    "salon_lab": "Sin preferencia",
+    "prioridad_lab": "Opcional"
+  },
+  "PROFESOR 36": {
+    "salon_teoria": "Sin preferencia",
+    "prioridad_teoria": "Opcional",
+    "salon_lab": "LIA",
+    "prioridad_lab": "Prioritario"
+  },
+  "PROFESOR 4": {
+    "salon_teoria": "Sin preferencia",
+    "prioridad_teoria": "Opcional",
+    "salon_lab": "LBD",
+    "prioridad_lab": "Prioritario"
+  },
+  "PROFESOR 8": {
+    "salon_teoria": "FF7",
+    "prioridad_teoria": "Prioritario",
+    "salon_lab": "LCA",
+    "prioridad_lab": "Prioritario"
+  },
+  "PROFESOR 9": {
+    "salon_teoria": "FF8",
+    "prioridad_teoria": "Prioritario",
+    "salon_lab": "Sin preferencia",
+    "prioridad_lab": "Opcional"
+  }
+}

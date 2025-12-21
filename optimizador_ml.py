@@ -3,6 +3,7 @@
 Optimizador de Salones - Método Machine Learning
 Implementación del modelo de aprendizaje automático para optimización de asignaciones
 Incluye análisis de movimientos de profesores
+ACTUALIZADO: Integra restricciones de teoría/lab y preferencias de profesores
 """
 
 import pandas as pd
@@ -15,6 +16,13 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from analizar_movimientos import AnalizadorMovimientos
+from utils_restricciones import (
+    cargar_configuraciones,
+    determinar_tipo_hora,
+    obtener_preferencia_profesor,
+    es_preferencia_prioritaria,
+    filtrar_salones_por_tipo
+)
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -30,6 +38,10 @@ class OptimizadorML:
     
     def __init__(self, verbose=True):
         self.verbose = verbose
+        
+        # Cargar configuraciones de restricciones
+        self._log("📂 Cargando configuraciones de restricciones...")
+        self.config_materias, self.preferencias_profesores = cargar_configuraciones()
         
         # Modelos
         self.clasificador = RandomForestClassifier(
@@ -55,6 +67,8 @@ class OptimizadorML:
         # Catálogos
         self.salones_validos = self._inicializar_salones()
         self.salones_invalidos = {'AV1', 'AV2', 'AV4', 'AV5', 'E11'}
+        self.laboratorios = {'LBD', 'LBD2', 'LCA', 'LCG1', 'LCG2', 'LIA', 'LR', 'LSO'}
+        self.salones_teoria = {'FF1', 'FF2', 'FF3', 'FF4', 'FF5', 'FF6', 'FF7', 'FF8', 'FF9', 'FFA', 'FFB', 'FFC', 'FFD'}
         
         # Métricas
         self.metricas_entrenamiento = {}
@@ -132,6 +146,44 @@ class OptimizadorML:
         }).rename(columns={'Grupo': 'num_grupos_profesor', 'Salon': 'num_salones_profesor'})
         
         features = features.join(prof_stats, on='profesor')
+    
+        # 8. Features de Restricciones (NUEVO)
+        # Rastrear horas asignadas por materia para determinar tipo
+        horas_asignadas = {}
+        es_teoria_list = []
+        tiene_pref_list = []
+        prioridad_pref_list = []
+        
+        for idx, row in df.iterrows():
+            grupo = row['Grupo']
+            materia = row['Materia']
+            profesor = row['Profesor']
+            
+            # Determinar tipo de hora
+            key = (grupo, materia)
+            indice_hora = horas_asignadas.get(key, 0)
+            tipo_requerido = determinar_tipo_hora(materia, indice_hora, self.config_materias)
+            horas_asignadas[key] = indice_hora + 1
+            
+            es_teoria = 1 if tipo_requerido == 'Teoría' else 0
+            es_teoria_list.append(es_teoria)
+            
+            # Verificar preferencia del profesor
+            pref_salon = obtener_preferencia_profesor(profesor, tipo_requerido, self.preferencias_profesores)
+            tiene_pref = 1 if pref_salon else 0
+            tiene_pref_list.append(tiene_pref)
+            
+            # Prioridad de preferencia (0=ninguna, 1=opcional, 2=prioritaria)
+            if pref_salon:
+                es_prioritaria = es_preferencia_prioritaria(profesor, tipo_requerido, self.preferencias_profesores)
+                prioridad = 2 if es_prioritaria else 1
+            else:
+                prioridad = 0
+            prioridad_pref_list.append(prioridad)
+        
+        features['es_teoria'] = es_teoria_list
+        features['tiene_preferencia_profesor'] = tiene_pref_list
+        features['prioridad_preferencia'] = prioridad_pref_list
         
         # Codificar variables categóricas
         categorical_cols = ['grupo_codigo', 'materia', 'dia_semana', 'bloque_horario', 
@@ -153,7 +205,8 @@ class OptimizadorML:
         feature_cols = [col for col in features.columns if col.endswith('_encoded') or 
                        col in ['es_primer_semestre', 'semestre', 'horas_semana', 'hora_inicio', 
                               'es_hora_pico', 'num_salones_grupo', 'num_labs_grupo',
-                              'num_grupos_profesor', 'num_salones_profesor']]
+                              'num_grupos_profesor', 'num_salones_profesor',
+                              'es_teoria', 'tiene_preferencia_profesor', 'prioridad_preferencia']]
         
         X = features[feature_cols].fillna(0)
         self.feature_names = feature_cols
@@ -342,31 +395,43 @@ class OptimizadorML:
         Returns:
             bool: True si satisface todas las restricciones
         """
-        # H1: No salones inválidos
+        # 1. Salón no debe estar en lista de inválidos
         if salon in self.salones_invalidos:
             return False
         
-        # H2: Disponibilidad (no conflicto de horario)
+        # 2. No debe haber conflicto de horario (mismo salón, mismo día/hora)
         if len(horario_actual) > 0:
-            conflicto = horario_actual[
+            conflictos = horario_actual[
                 (horario_actual['Salon'] == salon) &
-                (horario_actual['Dia'] == asignacion['Dia']) &
-                (horario_actual['Bloque_Horario'] == asignacion['Bloque_Horario'])
+                (horario_actual['Dia'] == asignacion['dia']) &
+                (horario_actual['Bloque_Horario'] == asignacion['bloque'])
             ]
-            if len(conflicto) > 0:
+            if len(conflictos) > 0:
                 return False
         
-        # H3: Tipo de salón apropiado
-        # Si tiene horas prácticas, debe ser laboratorio
-        if asignacion.get('requiere_lab', False):
-            if not salon.startswith('L'):
+        # 3. Validar tipo de salón (teoría vs laboratorio) - NUEVO
+        es_lab = salon in self.laboratorios
+        requiere_lab = asignacion.get('tipo_requerido', 'Teoría') == 'Laboratorio'
+        if es_lab != requiere_lab:
+            return False
+        
+        # 4. Validar preferencias prioritarias del profesor - NUEVO
+        profesor = asignacion.get('profesor')
+        tipo_requerido = asignacion.get('tipo_requerido', 'Teoría')
+        
+        if profesor and tipo_requerido:
+            pref_salon = obtener_preferencia_profesor(profesor, tipo_requerido, self.preferencias_profesores)
+            es_prioritaria = es_preferencia_prioritaria(profesor, tipo_requerido, self.preferencias_profesores)
+            
+            # Si hay preferencia prioritaria, DEBE usar ese salón
+            if es_prioritaria and pref_salon and pref_salon != salon:
                 return False
         
-        # H4: Grupos de primer semestre (mismo salón para teoría)
+        # 5. Grupos de primer semestre (mismo salón para teoría)
         if asignacion.get('es_primer_semestre', False) and len(horario_actual) > 0:
             # Verificar si ya tiene asignación de teoría
             asigs_grupo = horario_actual[
-                (horario_actual['Grupo'] == asignacion['Grupo']) &
+                (horario_actual['Grupo'] == asignacion['grupo']) &
                 (horario_actual['Tipo_Salon'] == 'Teoría')
             ]
             if len(asigs_grupo) > 0:
@@ -405,22 +470,34 @@ class OptimizadorML:
         self._log(f"📊 Total de asignaciones a procesar: {total_asignaciones}")
         self._log(f"🎯 Objetivo: Eliminar {df_inicial['Es_Invalido'].sum()} asignaciones inválidas\n")
         
+        # Rastrear horas asignadas por materia
+        horas_asignadas_optimizar = {}
+        
         # Procesar cada asignación
         for idx, row in df_optimizado.iterrows():
+            # Determinar tipo de hora requerido
+            grupo = row['Grupo']
+            materia = row['Materia']
+            key = (grupo, materia)
+            indice_hora = horas_asignadas_optimizar.get(key, 0)
+            tipo_requerido = determinar_tipo_hora(materia, indice_hora, self.config_materias)
+            horas_asignadas_optimizar[key] = indice_hora + 1
+            
             # Extraer features de esta asignación
             asignacion_df = pd.DataFrame([row])
             X_asig = self.extraer_features(asignacion_df, incluir_target=False)
             
-            # Predecir top-5 salones candidatos
+            # Predecir top-10 salones candidatos
             candidatos = self.predecir_salon(X_asig.iloc[0].values, top_k=10)
             
-            # Preparar info de asignación para validación
+            # Preparar info de asignación para validación (con nuevos campos)
             asignacion_info = {
-                'Grupo': row['Grupo'],
-                'Dia': row['Dia'],
-                'Bloque_Horario': row['Bloque_Horario'],
-                'es_primer_semestre': row['Grupo'][0] == '1',
-                'requiere_lab': row['Tipo_Salon'] == 'Laboratorio'
+                'grupo': row['Grupo'],
+                'dia': row['Dia'],
+                'bloque': row['Bloque_Horario'],
+                'profesor': row['Profesor'],
+                'tipo_requerido': tipo_requerido,
+                'es_primer_semestre': row['Grupo'][0] == '1'
             }
             
             # Filtrar candidatos válidos

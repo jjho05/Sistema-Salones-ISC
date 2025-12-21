@@ -3,6 +3,7 @@
 Optimizador de Salones - Método Algoritmo Genético
 Implementación de algoritmo evolutivo para optimización de asignaciones
 Incluye análisis de movimientos de profesores
+ACTUALIZADO: Integra restricciones de teoría/lab y preferencias de profesores
 """
 
 import pandas as pd
@@ -14,6 +15,13 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from analizar_movimientos import AnalizadorMovimientos
+from utils_restricciones import (
+    cargar_configuraciones,
+    determinar_tipo_hora,
+    obtener_preferencia_profesor,
+    es_preferencia_prioritaria,
+    filtrar_salones_por_tipo
+)
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -58,15 +66,23 @@ class OptimizadorGenetico:
         self.tasa_elitismo = tasa_elitismo
         self.verbose = verbose
         
+        # Cargar configuraciones de restricciones
+        self._log("📂 Cargando configuraciones de restricciones...")
+        self.config_materias, self.preferencias_profesores = cargar_configuraciones()
+        
         # Catálogos
         self.salones_validos = self._inicializar_salones()
         self.salones_invalidos = {'AV1', 'AV2', 'AV4', 'AV5', 'E11'}
+        self.laboratorios = {'LBD', 'LBD2', 'LCA', 'LCG1', 'LCG2', 'LIA', 'LR', 'LSO'}
+        self.salones_teoria = {'FF1', 'FF2', 'FF3', 'FF4', 'FF5', 'FF6', 'FF7', 'FF8', 'FF9', 'FFA', 'FFB', 'FFC', 'FFD'}
         
         # Pesos de fitness
         self.pesos = {
             'invalidos': 1000,
             'conflictos': 500,
             'tipo_incorrecto': 300,
+            'preferencia_prioritaria': 400,  # NUEVO
+            'preferencia_opcional': 50,      # NUEVO
             'primer_semestre': 400,
             'capacidad': 200,
             'movimientos': 10,
@@ -170,11 +186,34 @@ class OptimizadorGenetico:
         # P3: Tipo de salón incorrecto
         tipo_incorrecto = 0
         for g in cromosoma.genes:
-            if g['tipo_requerido'] == 'Laboratorio' and not g['salon'].startswith('L'):
+            es_lab = g['salon'] in self.laboratorios
+            requiere_lab = g['tipo_requerido'] == 'Laboratorio'
+            if es_lab != requiere_lab:
                 tipo_incorrecto += 1
         penalizaciones['tipo_incorrecto'] = tipo_incorrecto
         
-        # P4: Grupos de primer semestre (más de un salón de teoría)
+        # P4: Preferencias de profesores (NUEVO)
+        pref_prioritarias_violadas = 0
+        pref_opcionales_violadas = 0
+        
+        for g in cromosoma.genes:
+            profesor = g['profesor']
+            tipo_req = g['tipo_requerido']
+            salon = g['salon']
+            
+            pref_salon = obtener_preferencia_profesor(profesor, tipo_req, self.preferencias_profesores)
+            if pref_salon:
+                es_prioritaria = es_preferencia_prioritaria(profesor, tipo_req, self.preferencias_profesores)
+                if pref_salon != salon:
+                    if es_prioritaria:
+                        pref_prioritarias_violadas += 1
+                    else:
+                        pref_opcionales_violadas += 1
+        
+        penalizaciones['preferencia_prioritaria'] = pref_prioritarias_violadas
+        penalizaciones['preferencia_opcional'] = pref_opcionales_violadas
+        
+        # P5: Grupos de primer semestre (más de un salón de teoría)
         grupos_1er = defaultdict(set)
         for g in cromosoma.genes:
             if g['es_primer_semestre'] and g['tipo_requerido'] == 'Teoría':
@@ -214,6 +253,8 @@ class OptimizadorGenetico:
             self.pesos['invalidos'] * penalizaciones['invalidos'] +
             self.pesos['conflictos'] * penalizaciones['conflictos'] +
             self.pesos['tipo_incorrecto'] * penalizaciones['tipo_incorrecto'] +
+            self.pesos['preferencia_prioritaria'] * penalizaciones['preferencia_prioritaria'] +
+            self.pesos['preferencia_opcional'] * penalizaciones['preferencia_opcional'] +
             self.pesos['primer_semestre'] * penalizaciones['primer_semestre'] +
             self.pesos['capacidad'] * penalizaciones['capacidad'] +
             self.pesos['movimientos'] * costos['movimientos'] +
@@ -317,11 +358,27 @@ class OptimizadorGenetico:
         self._log("="*80 + "\n")
         
         # 1. INICIALIZACIÓN
-        self._log("🌱 Inicializando población...")
+        self._log("📊 Inicializando población...")
+        
+        # Agregar columna tipo_requerido basada en configuración
+        df_trabajo = df_inicial.copy()
+        horas_asignadas = {}
+        tipos_requeridos = []
+        
+        for idx, row in df_trabajo.iterrows():
+            grupo = row['Grupo']
+            materia = row['Materia']
+            key = (grupo, materia)
+            indice_hora = horas_asignadas.get(key, 0)
+            tipo_req = determinar_tipo_hora(materia, indice_hora, self.config_materias)
+            horas_asignadas[key] = indice_hora + 1
+            tipos_requeridos.append(tipo_req)
+        
+        df_trabajo['Tipo_Salon'] = tipos_requeridos  # Sobrescribir con tipo correcto
         poblacion = []
         
         # Individuo 1: Horario inicial
-        individuo_inicial = self.df_a_cromosoma(df_inicial)
+        individuo_inicial = self.df_a_cromosoma(df_trabajo) # Use df_trabajo with new column
         poblacion.append(individuo_inicial)
         
         # Individuos 2-N: Variaciones aleatorias

@@ -1,0 +1,224 @@
+{
+  "ADMINISTRACIÓN DE BASE DE DATOS": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  },
+  "ADMINISTRACIÓN DE REDES": {
+    "total_horas": 4,
+    "horas_teoria": 2,
+    "horas_lab": 2,
+    "distribucion": "2+2"
+  },
+  "ALGORITMOS Y LENGUAJES DE PROGRAMACIÓN": {
+    "total_horas": 4,
+    "horas_teoria": 2,
+    "horas_lab": 2,
+    "distribucion": "2+2"
+  },
+  "ALGORITMOS Y PROGRAMACIÓN": {
+    "total_horas": 4,
+    "horas_teoria": 2,
+    "horas_lab": 2,
+    "distribucion": "2+2"
+  },
+  "ANÁLISIS Y DISEÑO DE ALGORITMOS": {
+    "total_horas": 5,
+    "horas_teoria": 3,
+    "horas_lab": 2,
+    "distribucion": "3+2"
+  },
+  "COMPUTACIÓN PARA INGENIERÍA PETROLERA": {
+    "total_horas": 5,
+    "horas_teoria": 3,
+    "horas_lab": 2,
+    "distribucion": "3+2"
+  },
+  "CONMUTACIÓN Y ENRUTAMIENTO EN REDES DE DATOS": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  },
+  "CÁLCULO DIFERENCIAL": {
+    "total_horas": 5,
+    "horas_teoria": 5,
+    "horas_lab": 0,
+    "distribucion": "5+0"
+  },
+  "ESTRUCTURA DE DATOS": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  },
+  "FUNDAMENTOS DE BASE DE DATOS": {
+    "total_horas": 5,
+    "horas_teoria": 3,
+    "horas_lab": 2,
+    "distribucion": "3+2"
+  },
+  "FUNDAMENTOS DE INGENIERÍA DE SOFTWARE": {
+    "total_horas": 4,
+    "horas_teoria": 4,
+    "horas_lab": 0,
+    "distribucion": "4+0"
+  },
+  "FUNDAMENTOS DE PROGRAMACIÓN": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  },
+  "GESTIÓN DE PROYECTOS DE SOFTWARE": {
+    "total_horas": 6,
+    "horas_teoria": 6,
+    "horas_lab": 0,
+    "distribucion": "6+0"
+  },
+  "GRAFICACIÓN": {
+    "total_horas": 4,
+    "horas_teoria": 2,
+    "horas_lab": 2,
+    "distribucion": "2+2"
+  },
+  "INGENIERÍA DE SOFTWARE": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  },
+  "INTELIGENCIA ARTIFICIAL": {
+    "total_horas": 4,
+    "horas_teoria": 0,
+    "horas_lab": 4,
+    "distribucion": "0+4"
+  },
+  "INTERFACES PARA INTELIGENCIA DE NEGOCIOS": {
+    "total_horas": 5,
+    "horas_teoria": 3,
+    "horas_lab": 2,
+    "distribucion": "3+2"
+  },
+  "LENGUAJES Y AUTÓMATAS I": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  },
+  "LENGUAJES Y AUTÓMATAS II": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  },
+  "MATEMÁTICAS DISCRETAS": {
+    "total_horas": 5,
+    "horas_teoria": 5,
+    "horas_lab": 0,
+    "distribucion": "5+0"
+  },
+  "PROGRAMACIÓN": {
+    "total_horas": 4,
+    "horas_teoria": 2,
+    "horas_lab": 2,
+    "distribucion": "2+2"
+  },
+  "PROGRAMACIÓN ESTRUCTURADA": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  },
+  "PROGRAMACIÓN LÓGICA Y FUNCIONAL": {
+    "total_horas": 4,
+    "horas_teoria": 2,
+    "horas_lab": 2,
+    "distribucion": "2+2"
+  },
+  "PROGRAMACIÓN NATIVA PARA MÓVILES": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  },
+  "PROGRAMACIÓN ORIENTADA A OBJETOS": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  },
+  "PROGRAMACIÓN VISUAL": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  },
+  "PROGRAMACIÓN WEB": {
+    "total_horas": 5,
+    "horas_teoria": 1,
+    "horas_lab": 4,
+    "distribucion": "1+4"
+  },
+  "REDES DE COMPUTADORAS": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  },
+  "SIMULACIÓN": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  },
+  "SISTEMAS OPERATIVOS": {
+    "total_horas": 4,
+    "horas_teoria": 2,
+    "horas_lab": 2,
+    "distribucion": "2+2"
+  },
+  "TALLER DE BASE DE DATOS": {
+    "total_horas": 4,
+    "horas_teoria": 0,
+    "horas_lab": 4,
+    "distribucion": "0+4"
+  },
+  "TALLER DE INVESTIGACIÓN I": {
+    "total_horas": 4,
+    "horas_teoria": 4,
+    "horas_lab": 0,
+    "distribucion": "4+0"
+  },
+  "TALLER DE INVESTIGACIÓN II": {
+    "total_horas": 4,
+    "horas_teoria": 4,
+    "horas_lab": 0,
+    "distribucion": "4+0"
+  },
+  "TALLER DE SISTEMAS OPERATIVOS": {
+    "total_horas": 4,
+    "horas_teoria": 0,
+    "horas_lab": 4,
+    "distribucion": "0+4"
+  },
+  "TECNOLOGÍAS DE APLICACIONES WEB": {
+    "total_horas": 5,
+    "horas_teoria": 1,
+    "horas_lab": 4,
+    "distribucion": "1+4"
+  },
+  "TECNOLOGÍAS DE SERVICIOS WEB": {
+    "total_horas": 5,
+    "horas_teoria": 1,
+    "horas_lab": 4,
+    "distribucion": "1+4"
+  },
+  "TÓPICOS AVANZADOS DE PROGRAMACIÓN": {
+    "total_horas": 5,
+    "horas_teoria": 2,
+    "horas_lab": 3,
+    "distribucion": "2+3"
+  }
+}
