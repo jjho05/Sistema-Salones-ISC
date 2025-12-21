@@ -70,6 +70,20 @@ class OptimizadorGenetico:
         self._log("📂 Cargando configuraciones de restricciones...")
         self.config_materias, self.preferencias_profesores = cargar_configuraciones()
         
+        # Cargar índices inmutables (PRIORIDAD 1)
+        import json
+        from pathlib import Path
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        inmutables_path = Path(script_dir) / "datos_estructurados" / "indices_inmutables_p1.json"
+        self.indices_inmutables = set()
+        if inmutables_path.exists():
+            try:
+                with open(inmutables_path, 'r') as f:
+                    self.indices_inmutables = set(json.load(f))
+                self._log(f"✅ Índices inmutables cargados: {len(self.indices_inmutables)} clases")
+            except Exception as e:
+                self._log(f"⚠️  Error cargando índices inmutables: {e}")
+        
         # Catálogos
         self.salones_validos = self._inicializar_salones()
         self.salones_invalidos = {'AV1', 'AV2', 'AV4', 'AV5', 'E11'}
@@ -519,7 +533,7 @@ def main():
     print("="*80 + "\n")
     
     # Cargar datos
-    csv_inicial = "/Users/lic.ing.jesusolvera/Documents/PROYECTOS PERSONALES/Sistema-Salones-ISC/datos_estructurados/01_Horario_Inicial.csv"
+    csv_inicial = "/Users/lic.ing.jesusolvera/Documents/PROYECTOS PERSONALES/Sistema-Salones-ISC/datos_estructurados/00_Horario_PreAsignado_P1.csv"
     df_inicial = pd.read_csv(csv_inicial)
     
     # Crear optimizador con parámetros reducidos para velocidad
@@ -559,7 +573,7 @@ def main():
     print(f"   Mejora:     {comparativa_mov['mejora']['distancia']:+.0f} ({comparativa_mov['mejora']['distancia_pct']:+.1f}%)")
     
     # Guardar resultado
-    output_path = "/Users/lic.ing.jesusolvera/Documents/PROYECTOS PERSONALES/Sistema-Salones-ISC/datos_estructurados/04_Horario_Optimizado_Genetico.csv"
+    output_path = "/Users/lic.ing.jesusolvera/Documents/PROYECTOS PERSONALES/Sistema-Salones-ISC/datos_estructurados/06_Horario_Optimizado_Genetico.csv"
     df_resultado.to_csv(output_path, index=False)
     print(f"\n💾 Resultado guardado: {output_path}")
     

@@ -2,13 +2,13 @@
   "PROFESOR 3": {
     "materias": {
       "LENGUAJES Y AUTÓMATAS I": {
-        "salon_teoria": "FF3",
+        "salon_teoria": "FFA",
         "prioridad_teoria": "Prioritario",
         "salon_lab": "Sin preferencia",
         "prioridad_lab": "Opcional"
       },
       "LENGUAJES Y AUTÓMATAS II": {
-        "salon_teoria": "FF3",
+        "salon_teoria": "FFA",
         "prioridad_teoria": "Prioritario",
         "salon_lab": "Sin preferencia",
         "prioridad_lab": "Opcional"
@@ -69,22 +69,6 @@
       }
     }
   },
-  "PROFESOR 10": {
-    "materias": {
-      "FUNDAMENTOS DE BASE DE DATOS": {
-        "salon_teoria": "FF7",
-        "prioridad_teoria": "Prioritario",
-        "salon_lab": "Sin preferencia",
-        "prioridad_lab": "Opcional"
-      },
-      "TALLER DE BASE DE DATOS": {
-        "salon_teoria": "FF7",
-        "prioridad_teoria": "Prioritario",
-        "salon_lab": "Sin preferencia",
-        "prioridad_lab": "Opcional"
-      }
-    }
-  },
   "PROFESOR 20": {
     "materias": {
       "ADMINISTRACIÓN DE REDES": {
@@ -137,22 +121,6 @@
       },
       "TALLER DE INVESTIGACIÓN II": {
         "salon_teoria": "FF9",
-        "prioridad_teoria": "Prioritario",
-        "salon_lab": "Sin preferencia",
-        "prioridad_lab": "Opcional"
-      }
-    }
-  },
-  "PROFESOR 33": {
-    "materias": {
-      "PROGRAMACIÓN NATIVA PARA MÓVILES": {
-        "salon_teoria": "FF6",
-        "prioridad_teoria": "Prioritario",
-        "salon_lab": "Sin preferencia",
-        "prioridad_lab": "Opcional"
-      },
-      "TÓPICOS AVANZADOS DE PROGRAMACIÓN": {
-        "salon_teoria": "FF6",
         "prioridad_teoria": "Prioritario",
         "salon_lab": "Sin preferencia",
         "prioridad_lab": "Opcional"

@@ -40,6 +40,31 @@ class OptimizadorGreedyHC:
         self._log("📂 Cargando configuraciones de restricciones...")
         self.config_materias, self.preferencias_profesores = cargar_configuraciones()
         
+        # Cargar asignación de grupos de 1er semestre
+        import json
+        from pathlib import Path
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        grupos_1er_path = Path(script_dir) / "asignacion_grupos_1er_semestre.json"
+        self.asignacion_grupos_1er = None
+        if grupos_1er_path.exists():
+            try:
+                with open(grupos_1er_path, 'r', encoding='utf-8') as f:
+                    self.asignacion_grupos_1er = json.load(f)
+                self._log(f"✅ Asignación de grupos 1er semestre cargada: {len(self.asignacion_grupos_1er)} grupos")
+            except Exception as e:
+                self._log(f"⚠️  Error cargando asignación grupos 1er semestre: {e}")
+        
+        # Cargar índices inmutables (PRIORIDAD 1)
+        inmutables_path = Path(script_dir) / "datos_estructurados" / "indices_inmutables_p1.json"
+        self.indices_inmutables = set()
+        if inmutables_path.exists():
+            try:
+                with open(inmutables_path, 'r') as f:
+                    self.indices_inmutables = set(json.load(f))
+                self._log(f"✅ Índices inmutables cargados: {len(self.indices_inmutables)} clases")
+            except Exception as e:
+                self._log(f"⚠️  Error cargando índices inmutables: {e}")
+        
         # Catálogos (CORREGIDOS - basados en datos reales)
         self.salones_invalidos = {'AV1', 'AV2', 'AV4', 'AV5', 'E11'}
         self.laboratorios = {'LBD', 'LBD2', 'LCA', 'LCG1', 'LCG2', 'LIA', 'LR', 'LSO'}
@@ -144,8 +169,28 @@ class OptimizadorGreedyHC:
         self._log("   🎯 Pre-asignando clases prioritarias...")
         solucion, ocupacion, clases_restantes = pre_asignar_prioritarias(
             df, self.config_materias, self.preferencias_profesores,
-            self.laboratorios, self.salones_teoria
+            self.laboratorios, self.salones_teoria, self.asignacion_grupos_1er
         )
+        
+        # Guardar índices y info de clases prioritarias
+        self.clases_prioritarias_indices = set(solucion.keys()) - set(clases_restantes)
+        # Guardar info completa para corrección final
+        self.clases_prioritarias_info = {}
+        from utils_restricciones import obtener_preferencia_profesor
+        for idx in self.clases_prioritarias_indices:
+            row = df.loc[idx]
+            profesor = row['Profesor']
+            materia = row['Materia']
+            tipo_salon = row['Tipo_Salon']  # Usar tipo del DataFrame directamente
+            
+            # Obtener salón preferido del JSON
+            salon_preferido = obtener_preferencia_profesor(profesor, tipo_salon, self.preferencias_profesores, materia)
+            if salon_preferido:
+                self.clases_prioritarias_info[idx] = {
+                    'salon_prioritario': salon_preferido,
+                    'profesor': profesor,
+                    'materia': materia
+                }
         
         num_prioritarias = len(df) - len(clases_restantes)
         self._log(f"   ✅ {num_prioritarias} clases prioritarias pre-asignadas")
@@ -273,6 +318,10 @@ class OptimizadorGreedyHC:
             for _ in range(50):  # 50 intentos por iteración
                 idx1, idx2 = random.sample(indices, 2)
                 
+                # NO intercambiar clases inmutables (PRIORIDAD 1)
+                if idx1 in self.indices_inmutables or idx2 in self.indices_inmutables:
+                    continue
+                
                 # Solo intercambiar si son del mismo tipo
                 if tipos_por_idx[idx1] != tipos_por_idx[idx2]:
                     continue
@@ -301,6 +350,22 @@ class OptimizadorGreedyHC:
                 self._log(f"   Iter {iteracion+1}: Energía = {mejor_energia:.0f}")
         
         self._log(f"   Energía final: {mejor_energia:.0f}")
+        
+        # CORRECCIÓN FINAL: Garantizar 100% cumplimiento
+        if hasattr(self, 'clases_prioritarias_info'):
+            self._log(f"\n   🔧 Verificando {len(self.clases_prioritarias_info)} clases prioritarias...")
+            correcciones = 0
+            for idx, info in self.clases_prioritarias_info.items():
+                salon_actual = mejor_solucion.get(idx)
+                salon_esperado = info['salon_prioritario']
+                if salon_actual != salon_esperado:
+                    mejor_solucion[idx] = salon_esperado
+                    correcciones += 1
+            if correcciones > 0:
+                self._log(f"   ✅ {correcciones} clases corregidas a salón prioritario")
+            else:
+                self._log(f"   ✅ Todas las clases prioritarias están correctas")
+        
         return mejor_solucion
     
     def optimizar(self, df: pd.DataFrame) -> Tuple[Dict, float]:

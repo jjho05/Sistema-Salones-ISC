@@ -43,6 +43,20 @@ class OptimizadorML:
         self._log("📂 Cargando configuraciones de restricciones...")
         self.config_materias, self.preferencias_profesores = cargar_configuraciones()
         
+        # Cargar índices inmutables (PRIORIDAD 1)
+        import json
+        from pathlib import Path
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        inmutables_path = Path(script_dir) / "datos_estructurados" / "indices_inmutables_p1.json"
+        self.indices_inmutables = set()
+        if inmutables_path.exists():
+            try:
+                with open(inmutables_path, 'r') as f:
+                    self.indices_inmutables = set(json.load(f))
+                self._log(f"✅ Índices inmutables cargados: {len(self.indices_inmutables)} clases")
+            except Exception as e:
+                self._log(f"⚠️  Error cargando índices inmutables: {e}")
+        
         # Modelos
         self.clasificador = RandomForestClassifier(
             n_estimators=100,
@@ -620,7 +634,7 @@ def main():
     print("="*80 + "\n")
     
     # Cargar datos
-    csv_inicial = "/Users/lic.ing.jesusolvera/Documents/PROYECTOS PERSONALES/Sistema-Salones-ISC/datos_estructurados/01_Horario_Inicial.csv"
+    csv_inicial = "/Users/lic.ing.jesusolvera/Documents/PROYECTOS PERSONALES/Sistema-Salones-ISC/datos_estructurados/00_Horario_PreAsignado_P1.csv"
     df_inicial = pd.read_csv(csv_inicial)
     
     # Crear optimizador
@@ -633,7 +647,7 @@ def main():
     df_resultado = optimizador.optimizar(df_inicial)
     
     # Guardar resultado
-    output_path = "/Users/lic.ing.jesusolvera/Documents/PROYECTOS PERSONALES/Sistema-Salones-ISC/datos_estructurados/03_Horario_Optimizado_ML.csv"
+    output_path = "/Users/lic.ing.jesusolvera/Documents/PROYECTOS PERSONALES/Sistema-Salones-ISC/datos_estructurados/05_Horario_Optimizado_ML.csv"
     df_resultado.to_csv(output_path, index=False)
     print(f"\n💾 Resultado guardado: {output_path}\n")
     
