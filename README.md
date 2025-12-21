@@ -109,7 +109,17 @@ python3 pipeline_comparativo_greedy.py
 
 # Comparativa final consolidada
 python3 generar_comparativa_final.py
+
+# Excel comparativo de salones (NUEVO)
+python3 generar_excel_comparativo_salones.py
 ```
+
+**Excel Comparativo de Salones:**
+- 📊 Agrupa por materia/grupo
+- 🔄 Muestra 5 métodos juntos para cada grupo
+- 🎨 Código de colores para identificación rápida
+- 📋 Formato: Lunes a Viernes (sin sábado)
+- ✅ Comparación visual instantánea
 
 ### 3. Aplicación Web
 
@@ -205,7 +215,8 @@ Sistema-Salones-ISC/
 │   ├── 01_inicial_vs_profesor/      # 15 gráficos + PDF
 │   ├── 02_inicial_vs_ml/            # 15 gráficos + PDF
 │   ├── 03_inicial_vs_genetico/      # 15 gráficos + PDF
-│   └── 04_inicial_vs_greedy/        # 15 gráficos + PDF
+│   ├── 04_inicial_vs_greedy/        # 15 gráficos + PDF
+│   └── excel_comparativo/           # Excel comparativo de salones
 │
 ├── 🌐 webapp/                       # Aplicación Web
 │   ├── app.py                       # Servidor Flask
@@ -224,7 +235,8 @@ Sistema-Salones-ISC/
     ├── analizar_movimientos.py
     ├── generar_analisis_comparativo.py
     ├── generar_reporte_pdf.py
-    └── generar_excel_formateado.py
+    ├── generar_excel_formateado.py
+    └── generar_excel_comparativo_salones.py  # NUEVO
 ```
 
 ## 📚 Documentación
