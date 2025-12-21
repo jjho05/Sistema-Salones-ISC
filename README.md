@@ -300,7 +300,7 @@ Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
 
 ## 📞 Contacto
 
-- Email: lic.ing.jesusolvera@gmail.com
+- Email: jjho.reivaj05@gmail.com / hernandez.jesusjavier.20.0770@gmail.com
 - GitHub: [@jjho05](https://github.com/jjho05)
 
 ---
