@@ -319,16 +319,40 @@ class OptimizadorGenetico:
     
     def reparar_restricciones(self, cromosoma):
         """Repara violaciones de restricciones hard"""
+        
+        # R0: FORZAR preferencias prioritarias (PRIMERO, antes que todo)
+        for gen in cromosoma.genes:
+            profesor = gen['profesor']
+            tipo_req = gen['tipo_requerido']
+            
+            pref_salon = obtener_preferencia_profesor(profesor, tipo_req, self.preferencias_profesores)
+            es_prioritaria = es_preferencia_prioritaria(profesor, tipo_req, self.preferencias_profesores)
+            
+            # Si hay preferencia PRIORITARIA, forzar ese salón (sin excepciones)
+            if es_prioritaria and pref_salon:
+                gen['salon'] = pref_salon
+        
         # R1: Eliminar salones inválidos
         for gen in cromosoma.genes:
             if gen['salon'] in self.salones_invalidos:
-                if gen['tipo_requerido'] == 'Laboratorio':
-                    candidatos = [s for s in self.salones_validos if s.startswith('L')]
-                else:
-                    candidatos = [s for s in self.salones_validos if not s.startswith('L')]
+                # Verificar si tiene preferencia prioritaria
+                profesor = gen['profesor']
+                tipo_req = gen['tipo_requerido']
+                pref_salon = obtener_preferencia_profesor(profesor, tipo_req, self.preferencias_profesores)
+                es_prioritaria = es_preferencia_prioritaria(profesor, tipo_req, self.preferencias_profesores)
                 
-                if candidatos:
-                    gen['salon'] = random.choice(candidatos)
+                # Si tiene preferencia prioritaria, usar esa
+                if es_prioritaria and pref_salon:
+                    gen['salon'] = pref_salon
+                else:
+                    # Buscar alternativa del tipo correcto
+                    if gen['tipo_requerido'] == 'Laboratorio':
+                        candidatos = [s for s in self.salones_validos if s in self.laboratorios]
+                    else:
+                        candidatos = [s for s in self.salones_validos if s in self.salones_teoria]
+                    
+                    if candidatos:
+                        gen['salon'] = random.choice(candidatos)
         
         # R2: Resolver conflictos de horario
         # (Simplificado - en versión completa se haría más exhaustivo)

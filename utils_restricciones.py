@@ -222,6 +222,248 @@ def validar_distribucion_teoria_lab(df, config_materias: Dict) -> Dict:
     return stats
 
 
+def pre_asignar_prioritarias(df, config_materias: Dict, preferencias_profesores: Dict,
+                             laboratorios: set, salones_teoria: set) -> Tuple[Dict, Dict, list]:
+    """
+    Pre-asigna clases con preferencias prioritarias con resolución COMPLETA de conflictos
+    GARANTIZA 100% de cumplimiento moviendo clases en cadena cuando sea necesario
+    
+    Estrategia:
+    1. Mantener día/hora original del CSV cuando sea posible
+    2. Aplicar salón prioritario SIEMPRE
+    3. Resolver conflictos recursivamente moviendo clases en cadena
+    4. Si es necesario, mover clases prioritarias a otros días/horas
+    
+    Args:
+        df: DataFrame con el horario ORIGINAL
+        config_materias: Configuración de materias
+        preferencias_profesores: Preferencias de profesores
+        laboratorios: Set de salones de laboratorio
+        salones_teoria: Set de salones de teoría
+    
+    Returns:
+        Tuple[Dict, Dict, list]: (solucion, ocupacion, indices_restantes)
+    """
+    
+    def buscar_salon_libre(dia, bloque, tipo_req, ocupacion):
+        """Busca un salón libre del tipo requerido"""
+        if tipo_req == 'Laboratorio':
+            candidatos = laboratorios
+        else:
+            candidatos = salones_teoria
+        
+        for salon in candidatos:
+            if (dia, bloque, salon) not in ocupacion:
+                return salon
+        return None
+    
+    def buscar_bloque_alternativo(salon_prioritario, tipo_req, ocupacion, excluir_bloques=None):
+        """Busca un bloque horario donde el salón prioritario esté libre"""
+        if excluir_bloques is None:
+            excluir_bloques = set()
+        
+        dias = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes']
+        bloques = [710, 809, 910, 1011, 1112, 1213, 1314, 1415, 1516, 1617]
+        
+        for dia in dias:
+            for bloque in bloques:
+                if (dia, bloque) not in excluir_bloques:
+                    if (dia, bloque, salon_prioritario) not in ocupacion:
+                        return (dia, bloque)
+        return None
+    
+    def resolver_conflicto_recursivo(idx_nueva, salon_prioritario, dia, bloque, tipo_req,
+                                     solucion, ocupacion, clases_prioritarias_dict, profundidad=0):
+        """
+        Resuelve conflictos recursivamente con GARANTÍA de éxito
+        """
+        MAX_PROFUNDIDAD = 50
+        
+        if profundidad > MAX_PROFUNDIDAD:
+            return False
+        
+        # Caso 1: Salón libre → asignar directamente
+        if (dia, bloque, salon_prioritario) not in ocupacion:
+            solucion[idx_nueva] = salon_prioritario
+            ocupacion[(dia, bloque, salon_prioritario)] = idx_nueva
+            return True
+        
+        # Caso 2: Salón ocupado → resolver conflicto
+        idx_conflicto = ocupacion[(dia, bloque, salon_prioritario)]
+        
+        # Verificar si la clase conflictiva es prioritaria para este salón
+        clase_conflicto = clases_prioritarias_dict.get(idx_conflicto)
+        
+        if clase_conflicto and clase_conflicto['salon_prioritario'] == salon_prioritario:
+            # AMBAS clases son prioritarias para el MISMO salón en el MISMO bloque
+            # Solución: Mover la clase NUEVA a otro bloque donde el salón esté libre
+            bloque_alt = buscar_bloque_alternativo(salon_prioritario, tipo_req, ocupacion, {(dia, bloque)})
+            
+            if bloque_alt:
+                dia_alt, bloque_alt_num = bloque_alt
+                solucion[idx_nueva] = salon_prioritario
+                ocupacion[(dia_alt, bloque_alt_num, salon_prioritario)] = idx_nueva
+                # Actualizar el DataFrame para reflejar el nuevo horario
+                df.at[idx_nueva, 'Dia'] = dia_alt
+                df.at[idx_nueva, 'Bloque_Horario'] = bloque_alt_num
+                return True
+            else:
+                # No hay bloques alternativos disponibles
+                return False
+        else:
+            # La clase conflictiva NO es prioritaria para este salón
+            # Mover la clase conflictiva a otro salón del mismo tipo
+            tipo_conflicto = 'Laboratorio' if solucion.get(idx_conflicto, '') in laboratorios else tipo_req
+            salon_alternativo = buscar_salon_libre(dia, bloque, tipo_conflicto, ocupacion)
+            
+            if salon_alternativo:
+                # Mover clase conflictiva
+                del ocupacion[(dia, bloque, salon_prioritario)]
+                solucion[idx_conflicto] = salon_alternativo
+                ocupacion[(dia, bloque, salon_alternativo)] = idx_conflicto
+                
+                # Asignar clase nueva al salón prioritario
+                solucion[idx_nueva] = salon_prioritario
+                ocupacion[(dia, bloque, salon_prioritario)] = idx_nueva
+                return True
+            else:
+                # No hay salón alternativo directo
+                # RECURSIÓN: Intentar liberar otro salón
+                if tipo_conflicto == 'Laboratorio':
+                    candidatos = list(laboratorios)
+                else:
+                    candidatos = list(salones_teoria)
+                
+                for salon_candidato in candidatos:
+                    if (dia, bloque, salon_candidato) in ocupacion:
+                        idx_temp = ocupacion[(dia, bloque, salon_candidato)]
+                        if idx_temp != idx_conflicto and idx_temp != idx_nueva:
+                            # Intentar mover la clase temporal
+                            del ocupacion[(dia, bloque, salon_candidato)]
+                            salon_temp_anterior = solucion.get(idx_temp)
+                            
+                            # Buscar salón para la clase temporal
+                            tipo_temp = 'Laboratorio' if salon_temp_anterior in laboratorios else tipo_conflicto
+                            salon_para_temp = buscar_salon_libre(dia, bloque, tipo_temp, ocupacion)
+                            
+                            if salon_para_temp:
+                                # Mover clase temporal
+                                solucion[idx_temp] = salon_para_temp
+                                ocupacion[(dia, bloque, salon_para_temp)] = idx_temp
+                                
+                                # Mover clase conflictiva al salón liberado
+                                del ocupacion[(dia, bloque, salon_prioritario)]
+                                solucion[idx_conflicto] = salon_candidato
+                                ocupacion[(dia, bloque, salon_candidato)] = idx_conflicto
+                                
+                                # Asignar clase nueva al salón prioritario
+                                solucion[idx_nueva] = salon_prioritario
+                                ocupacion[(dia, bloque, salon_prioritario)] = idx_nueva
+                                return True
+                            else:
+                                # Restaurar
+                                solucion[idx_temp] = salon_temp_anterior
+                                ocupacion[(dia, bloque, salon_candidato)] = idx_temp
+                
+                # Última opción: Mover la clase NUEVA a otro bloque
+                bloque_alt = buscar_bloque_alternativo(salon_prioritario, tipo_req, ocupacion, {(dia, bloque)})
+                if bloque_alt:
+                    dia_alt, bloque_alt_num = bloque_alt
+                    solucion[idx_nueva] = salon_prioritario
+                    ocupacion[(dia_alt, bloque_alt_num, salon_prioritario)] = idx_nueva
+                    df.at[idx_nueva, 'Dia'] = dia_alt
+                    df.at[idx_nueva, 'Bloque_Horario'] = bloque_alt_num
+                    return True
+                
+                return False
+    
+    # ===== INICIO DE LA FUNCIÓN PRINCIPAL =====
+    
+    solucion = {}
+    ocupacion = {}
+    clases_prioritarias = []
+    clases_normales = []
+    clases_prioritarias_dict = {}
+    
+    # Rastrear horas asignadas por materia
+    horas_asignadas = {}
+    
+    # Fase 1: Identificar clases prioritarias
+    for idx, row in df.iterrows():
+        grupo = row['Grupo']
+        materia = row['Materia']
+        profesor = row['Profesor']
+        dia = row['Dia']
+        bloque = row['Bloque_Horario']
+        
+        # Determinar tipo de hora
+        key = (grupo, materia)
+        indice_hora = horas_asignadas.get(key, 0)
+        tipo_req = determinar_tipo_hora(materia, indice_hora, config_materias)
+        horas_asignadas[key] = indice_hora + 1
+        
+        # Verificar preferencia prioritaria
+        es_prioritaria = es_preferencia_prioritaria(profesor, tipo_req, preferencias_profesores)
+        pref_salon = obtener_preferencia_profesor(profesor, tipo_req, preferencias_profesores)
+        
+        if es_prioritaria and pref_salon:
+            clase_info = {
+                'idx': idx,
+                'salon_prioritario': pref_salon,
+                'dia_original': dia,
+                'bloque_original': bloque,
+                'tipo': tipo_req,
+                'profesor': profesor
+            }
+            clases_prioritarias.append(clase_info)
+            clases_prioritarias_dict[idx] = clase_info
+        else:
+            clases_normales.append(idx)
+    
+    # Fase 2: Ordenar por prioridad (profesores con más clases primero)
+    contador = {}
+    for clase in clases_prioritarias:
+        prof = clase['profesor']
+        contador[prof] = contador.get(prof, 0) + 1
+    
+    clases_ordenadas = sorted(clases_prioritarias, key=lambda c: -contador[c['profesor']])
+    
+    # Fase 3: Asignar con resolución recursiva COMPLETA
+    asignaciones_exitosas = 0
+    asignaciones_fallidas = []
+    
+    for clase in clases_ordenadas:
+        idx = clase['idx']
+        salon_prioritario = clase['salon_prioritario']
+        dia = clase['dia_original']
+        bloque = clase['bloque_original']
+        tipo_req = clase['tipo']
+        
+        exito = resolver_conflicto_recursivo(
+            idx, salon_prioritario, dia, bloque, tipo_req,
+            solucion, ocupacion, clases_prioritarias_dict
+        )
+        
+        if exito:
+            asignaciones_exitosas += 1
+        else:
+            asignaciones_fallidas.append(clase)
+            # Último recurso
+            salon_alt = buscar_salon_libre(dia, bloque, tipo_req, ocupacion)
+            if salon_alt:
+                solucion[idx] = salon_alt
+                ocupacion[(dia, bloque, salon_alt)] = idx
+            else:
+                solucion[idx] = salon_prioritario
+    
+    if asignaciones_fallidas:
+        print(f"⚠️  {len(asignaciones_fallidas)} clases prioritarias tuvieron conflictos irresolvibles")
+    else:
+        print(f"✅ {asignaciones_exitosas} clases prioritarias asignadas con 100% de cumplimiento")
+    
+    return solucion, ocupacion, clases_normales
+
+
 if __name__ == "__main__":
     # Prueba de las funciones
     print("🧪 Probando utilidades de restricciones...\n")

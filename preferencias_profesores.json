@@ -1,62 +1,162 @@
 {
-  "PROFESOR 10": {
-    "salon_teoria": "FF7",
-    "prioridad_teoria": "Prioritario",
-    "salon_lab": "LCA",
-    "prioridad_lab": "Prioritario"
-  },
-  "PROFESOR 20": {
-    "salon_teoria": "FF7",
-    "prioridad_teoria": "Prioritario",
-    "salon_lab": "LR",
-    "prioridad_lab": "Prioritario"
-  },
-  "PROFESOR 21": {
-    "salon_teoria": "FFA",
-    "prioridad_teoria": "Prioritario",
-    "salon_lab": "LSO",
-    "prioridad_lab": "Prioritario"
-  },
-  "PROFESOR 26": {
-    "salon_teoria": "FF9",
-    "prioridad_teoria": "Prioritario",
-    "salon_lab": "Sin preferencia",
-    "prioridad_lab": "Opcional"
-  },
   "PROFESOR 3": {
-    "salon_teoria": "FF3",
-    "prioridad_teoria": "Prioritario",
-    "salon_lab": "Sin preferencia",
-    "prioridad_lab": "Opcional"
-  },
-  "PROFESOR 33": {
-    "salon_teoria": "FF6",
-    "prioridad_teoria": "Prioritario",
-    "salon_lab": "Sin preferencia",
-    "prioridad_lab": "Opcional"
-  },
-  "PROFESOR 36": {
-    "salon_teoria": "Sin preferencia",
-    "prioridad_teoria": "Opcional",
-    "salon_lab": "LIA",
-    "prioridad_lab": "Prioritario"
+    "materias": {
+      "LENGUAJES Y AUTÓMATAS I": {
+        "salon_teoria": "FF3",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "Sin preferencia",
+        "prioridad_lab": "Opcional"
+      },
+      "LENGUAJES Y AUTÓMATAS II": {
+        "salon_teoria": "FF3",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "Sin preferencia",
+        "prioridad_lab": "Opcional"
+      }
+    }
   },
   "PROFESOR 4": {
-    "salon_teoria": "Sin preferencia",
-    "prioridad_teoria": "Opcional",
-    "salon_lab": "LBD",
-    "prioridad_lab": "Prioritario"
+    "materias": {
+      "INTELIGENCIA ARTIFICIAL": {
+        "salon_teoria": "Sin preferencia",
+        "prioridad_teoria": "Opcional",
+        "salon_lab": "LCG2",
+        "prioridad_lab": "Prioritario"
+      },
+      "TALLER DE SISTEMAS OPERATIVOS": {
+        "salon_teoria": "Sin preferencia",
+        "prioridad_teoria": "Opcional",
+        "salon_lab": "LBD",
+        "prioridad_lab": "Prioritario"
+      }
+    }
   },
   "PROFESOR 8": {
-    "salon_teoria": "FF7",
-    "prioridad_teoria": "Prioritario",
-    "salon_lab": "LCA",
-    "prioridad_lab": "Prioritario"
+    "materias": {
+      "ADMINISTRACIÓN DE BASE DE DATOS": {
+        "salon_teoria": "FF7",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "LIA",
+        "prioridad_lab": "Prioritario"
+      },
+      "INGENIERÍA DE SOFTWARE": {
+        "salon_teoria": "FF7",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "LIA",
+        "prioridad_lab": "Prioritario"
+      }
+    }
   },
   "PROFESOR 9": {
-    "salon_teoria": "FF8",
-    "prioridad_teoria": "Prioritario",
-    "salon_lab": "Sin preferencia",
-    "prioridad_lab": "Opcional"
+    "materias": {
+      "FUNDAMENTOS DE INGENIERÍA DE SOFTWARE": {
+        "salon_teoria": "FF8",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "Sin preferencia",
+        "prioridad_lab": "Opcional"
+      },
+      "INGENIERÍA DE SOFTWARE": {
+        "salon_teoria": "FF8",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "Sin preferencia",
+        "prioridad_lab": "Opcional"
+      },
+      "TALLER DE INVESTIGACIÓN I": {
+        "salon_teoria": "FF8",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "Sin preferencia",
+        "prioridad_lab": "Opcional"
+      }
+    }
+  },
+  "PROFESOR 10": {
+    "materias": {
+      "FUNDAMENTOS DE BASE DE DATOS": {
+        "salon_teoria": "FF7",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "Sin preferencia",
+        "prioridad_lab": "Opcional"
+      },
+      "TALLER DE BASE DE DATOS": {
+        "salon_teoria": "FF7",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "Sin preferencia",
+        "prioridad_lab": "Opcional"
+      }
+    }
+  },
+  "PROFESOR 20": {
+    "materias": {
+      "ADMINISTRACIÓN DE REDES": {
+        "salon_teoria": "FF7",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "LR",
+        "prioridad_lab": "Prioritario"
+      },
+      "REDES DE COMPUTADORAS": {
+        "salon_teoria": "FF7",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "LR",
+        "prioridad_lab": "Prioritario"
+      }
+    }
+  },
+  "PROFESOR 21": {
+    "materias": {
+      "SIMULACIÓN": {
+        "salon_teoria": "Sin preferencia",
+        "prioridad_teoria": "Opcional",
+        "salon_lab": "LSO",
+        "prioridad_lab": "Prioritario"
+      }
+    }
+  },
+  "PROFESOR 24": {
+    "materias": {
+      "REDES DE COMPUTADORAS": {
+        "salon_teoria": "Sin preferencia",
+        "prioridad_teoria": "Opcional",
+        "salon_lab": "LR",
+        "prioridad_lab": "Prioritario"
+      }
+    }
+  },
+  "PROFESOR 26": {
+    "materias": {
+      "GESTIÓN DE PROYECTOS DE SOFTWARE": {
+        "salon_teoria": "FF9",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "Sin preferencia",
+        "prioridad_lab": "Opcional"
+      },
+      "TALLER DE INVESTIGACIÓN I": {
+        "salon_teoria": "FF9",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "Sin preferencia",
+        "prioridad_lab": "Opcional"
+      },
+      "TALLER DE INVESTIGACIÓN II": {
+        "salon_teoria": "FF9",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "Sin preferencia",
+        "prioridad_lab": "Opcional"
+      }
+    }
+  },
+  "PROFESOR 33": {
+    "materias": {
+      "PROGRAMACIÓN NATIVA PARA MÓVILES": {
+        "salon_teoria": "FF6",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "Sin preferencia",
+        "prioridad_lab": "Opcional"
+      },
+      "TÓPICOS AVANZADOS DE PROGRAMACIÓN": {
+        "salon_teoria": "FF6",
+        "prioridad_teoria": "Prioritario",
+        "salon_lab": "Sin preferencia",
+        "prioridad_lab": "Opcional"
+      }
+    }
   }
 }

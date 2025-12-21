@@ -20,7 +20,8 @@ from utils_restricciones import (
     determinar_tipo_hora,
     obtener_preferencia_profesor,
     es_preferencia_prioritaria,
-    filtrar_salones_por_tipo
+    filtrar_salones_por_tipo,
+    pre_asignar_prioritarias
 )
 
 class OptimizadorGreedyHC:
@@ -136,28 +137,39 @@ class OptimizadorGreedyHC:
         return energia
     
     def construccion_greedy(self, df: pd.DataFrame) -> Dict:
-        """Fase 1: Construcción voraz con restricciones"""
-        self._log("\n📊 Fase 1: Construcción Greedy (con restricciones)...")
-        solucion = {}
-        ocupacion = {}  # (dia, bloque, salon) -> idx
+        """Fase 1: Construcción voraz con restricciones (PRE-ASIGNACIÓN PRIORITARIA)"""
+        self._log("\n📊 Fase 1: Construcción Greedy (con pre-asignación prioritaria)...")
         
-        # Rastrear horas asignadas por materia para determinar tipo
-        horas_asignadas = {}  # (grupo, materia) -> contador
+        # FASE 1: Pre-asignar clases con preferencias prioritarias
+        self._log("   🎯 Pre-asignando clases prioritarias...")
+        solucion, ocupacion, clases_restantes = pre_asignar_prioritarias(
+            df, self.config_materias, self.preferencias_profesores,
+            self.laboratorios, self.salones_teoria
+        )
         
-        # Ordenar asignaciones por prioridad
-        df_sorted = df.copy()
-        df_sorted['prioridad'] = 0
+        num_prioritarias = len(df) - len(clases_restantes)
+        self._log(f"   ✅ {num_prioritarias} clases prioritarias pre-asignadas")
+        
+        # FASE 2: Asignar clases restantes con algoritmo greedy
+        self._log(f"   📋 Asignando {len(clases_restantes)} clases restantes...")
+        
+        # Rastrear horas asignadas por materia
+        horas_asignadas = {}
+        
+        # Ordenar clases restantes por prioridad
+        df_restantes = df.loc[clases_restantes].copy()
+        df_restantes['prioridad'] = 0
         
         # Prioridad 1: Primer semestre
-        df_sorted.loc[df_sorted['Grupo'].str[0] == '1', 'prioridad'] = 3
+        df_restantes.loc[df_restantes['Grupo'].str[0] == '1', 'prioridad'] = 3
         
-        # Prioridad 2: Labs (basado en Tipo_Salon original)
-        df_sorted.loc[df_sorted['Tipo_Salon'] == 'Laboratorio', 'prioridad'] += 2
+        # Prioridad 2: Labs
+        df_restantes.loc[df_restantes['Tipo_Salon'] == 'Laboratorio', 'prioridad'] += 2
         
-        df_sorted = df_sorted.sort_values('prioridad', ascending=False)
+        df_restantes = df_restantes.sort_values('prioridad', ascending=False)
         
         # Asignar vorazmente
-        for idx, row in df_sorted.iterrows():
+        for idx, row in df_restantes.iterrows():
             materia = row['Materia']
             grupo = row['Grupo']
             dia = row['Dia']
@@ -176,17 +188,12 @@ class OptimizadorGreedyHC:
             else:
                 candidatos = list(self.salones_teoria)
             
-            # Verificar preferencia del profesor
+            # Verificar preferencia opcional (no prioritaria)
             pref_salon = obtener_preferencia_profesor(profesor, tipo_requerido, self.preferencias_profesores)
             es_prioritaria = es_preferencia_prioritaria(profesor, tipo_requerido, self.preferencias_profesores)
             
-            # Si hay preferencia prioritaria, intentar usarla
-            if es_prioritaria and pref_salon and pref_salon in candidatos:
-                if (dia, bloque, pref_salon) not in ocupacion:
-                    # Usar salón prioritario
-                    solucion[idx] = pref_salon
-                    ocupacion[(dia, bloque, pref_salon)] = idx
-                    continue
+            # Si tiene preferencia opcional (no prioritaria), darle bonificación
+            # Las prioritarias ya fueron asignadas en la fase 1
             
             # Evaluar candidatos
             mejor_salon = None
@@ -200,9 +207,9 @@ class OptimizadorGreedyHC:
                 # Calcular score
                 score = 0
                 
-                # Bonificación por preferencia del profesor
-                if pref_salon == salon:
-                    score += 50  # Bonificación fuerte por preferencia
+                # Bonificación por preferencia opcional
+                if pref_salon == salon and not es_prioritaria:
+                    score += 50
                 
                 # Preferir salones cercanos a clases anteriores del profesor
                 clases_anteriores = [solucion[i] for i in solucion if df.loc[i]['Profesor'] == profesor]

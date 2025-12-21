@@ -50,8 +50,31 @@ class ConfiguradorISC(ctk.CTk):
                     'horas_lab': 0
                 }
             
-            # Cargar profesores únicos
-            self.profesores = sorted(df['Profesor'].unique())
+            
+            # Cargar profesores únicos (EXCLUIR profesor sin asignar)
+            todos_profesores = df['Profesor'].unique()
+            profesores_filtrados = [p for p in todos_profesores if p != "1 [] [] SIN PROFESOR ASIGNADO"]
+            
+            # Ordenar numéricamente (PROFESOR 1, PROFESOR 2, ..., PROFESOR 10, ...)
+            def extraer_numero(profesor):
+                """Extrae el número del nombre del profesor para ordenar correctamente"""
+                try:
+                    # Buscar el número en el nombre (ej: "PROFESOR 10" -> 10)
+                    partes = profesor.split()
+                    for parte in partes:
+                        if parte.isdigit():
+                            return int(parte)
+                    return 0
+                except:
+                    return 0
+            
+            self.profesores = sorted(profesores_filtrados, key=extraer_numero)
+            
+            # Crear mapeo de profesor → materias que imparte
+            self.profesor_materias = {}
+            for profesor in self.profesores:
+                materias_profesor = df[df['Profesor'] == profesor]['Materia'].unique()
+                self.profesor_materias[profesor] = sorted(materias_profesor)
             
             # Obtener salones disponibles
             self.salones_teoria = sorted([s for s in df[df['Tipo_Salon'] == 'Teoría']['Salon'].unique()])
@@ -71,6 +94,7 @@ class ConfiguradorISC(ctk.CTk):
             messagebox.showerror("Error", f"No se pudo cargar el horario:\n{e}")
             self.materias_info = {}
             self.profesores = []
+            self.profesor_materias = {}
             self.preferencias_profesores = {}
     
     def cargar_configuraciones_previas(self):
@@ -198,6 +222,7 @@ class ConfiguradorISC(ctk.CTk):
             text_color="gray"
         ).grid(row=1, column=0, padx=10, pady=5, sticky="w")
         
+        
         # Teoría
         ctk.CTkLabel(card, text="🏫 Teoría:", font=ctk.CTkFont(size=11)).grid(row=1, column=1, padx=(20, 5), pady=5, sticky="e")
         teoria_entry = ctk.CTkEntry(card, width=50, font=ctk.CTkFont(size=11))
@@ -210,6 +235,19 @@ class ConfiguradorISC(ctk.CTk):
         lab_entry.insert(0, str(info['horas_lab']))
         lab_entry.grid(row=2, column=2, padx=5, pady=5)
         
+        # Laboratorio Asignado (NUEVO)
+        ctk.CTkLabel(card, text="🧪 Lab Asignado:", font=ctk.CTkFont(size=11)).grid(row=3, column=1, padx=(20, 5), pady=5, sticky="e")
+        lab_asignado = ctk.CTkComboBox(
+            card,
+            width=100,
+            values=["Sin asignar"] + self.salones_lab,
+            font=ctk.CTkFont(size=10)
+        )
+        # Manejar None correctamente
+        lab_value = info.get('laboratorio_asignado')
+        lab_asignado.set(lab_value if lab_value else 'Sin asignar')
+        lab_asignado.grid(row=3, column=2, padx=5, pady=5)
+        
         # Distribución
         dist_label = ctk.CTkLabel(
             card,
@@ -217,11 +255,12 @@ class ConfiguradorISC(ctk.CTk):
             font=ctk.CTkFont(size=10),
             text_color="lightblue"
         )
-        dist_label.grid(row=1, column=3, rowspan=2, padx=10, pady=5)
+        dist_label.grid(row=1, column=3, rowspan=3, padx=10, pady=5)
         
         self.widgets_materias[materia] = {
             'teoria_entry': teoria_entry,
             'lab_entry': lab_entry,
+            'lab_asignado_combo': lab_asignado,
             'distribucion_label': dist_label,
             'total_horas': info['total_horas']
         }
@@ -265,72 +304,129 @@ class ConfiguradorISC(ctk.CTk):
             self.crear_tarjeta_preferencia(scrollable, profesor)
     
     def crear_tarjeta_preferencia(self, parent, profesor):
-        """Crea tarjeta de preferencias para un profesor"""
-        card = ctk.CTkFrame(parent)
-        card.pack(fill="x", padx=10, pady=5)
+        """Crea tarjeta de preferencias para un profesor con sus materias"""
+        card = ctk.CTkFrame(parent, fg_color=("#E8F4F8", "#1a1a2e"))
+        card.pack(fill="x", padx=10, pady=8)
         
-        # Nombre del profesor
+        # Header del profesor
+        header = ctk.CTkFrame(card, fg_color=("transparent"))
+        header.pack(fill="x", padx=10, pady=(10, 5))
+        
         ctk.CTkLabel(
-            card,
-            text=profesor,
-            font=ctk.CTkFont(size=12, weight="bold"),
+            header,
+            text=f"👨‍🏫 {profesor}",
+            font=ctk.CTkFont(size=14, weight="bold"),
             anchor="w"
-        ).grid(row=0, column=0, columnspan=4, padx=10, pady=(10, 5), sticky="w")
+        ).pack(side="left")
         
-        # Preferencia de salón teoría
-        ctk.CTkLabel(card, text="🏫 Salón Teoría:", font=ctk.CTkFont(size=10)).grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        # Número de materias
+        num_materias = len(self.profesor_materias.get(profesor, []))
+        ctk.CTkLabel(
+            header,
+            text=f"📚 {num_materias} materias",
+            font=ctk.CTkFont(size=11),
+            text_color="gray"
+        ).pack(side="right", padx=10)
         
-        salon_teoria_var = ctk.StringVar(value=self.preferencias_profesores.get(profesor, {}).get('salon_teoria', 'Sin preferencia'))
-        salon_teoria_menu = ctk.CTkOptionMenu(
-            card,
-            variable=salon_teoria_var,
-            values=['Sin preferencia'] + self.salones_teoria,
-            width=120,
-            font=ctk.CTkFont(size=10)
-        )
-        salon_teoria_menu.grid(row=1, column=1, padx=5, pady=5)
+        # Contenedor de materias
+        materias_frame = ctk.CTkFrame(card, fg_color="transparent")
+        materias_frame.pack(fill="both", expand=True, padx=10, pady=(5, 10))
         
-        # Prioridad teoría
-        prioridad_teoria_var = ctk.StringVar(value=self.preferencias_profesores.get(profesor, {}).get('prioridad_teoria', 'Opcional'))
-        prioridad_teoria_menu = ctk.CTkOptionMenu(
-            card,
-            variable=prioridad_teoria_var,
-            values=['Opcional', 'Prioritario'],
-            width=100,
-            font=ctk.CTkFont(size=10)
-        )
-        prioridad_teoria_menu.grid(row=1, column=2, padx=5, pady=5)
+        # Headers de columnas
+        headers_frame = ctk.CTkFrame(materias_frame, fg_color="transparent")
+        headers_frame.pack(fill="x", pady=(0, 5))
         
-        # Preferencia de laboratorio
-        ctk.CTkLabel(card, text="🔬 Laboratorio:", font=ctk.CTkFont(size=10)).grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        ctk.CTkLabel(headers_frame, text="Materia", font=ctk.CTkFont(size=10, weight="bold"), width=250, anchor="w").pack(side="left", padx=5)
+        ctk.CTkLabel(headers_frame, text="🏫 Salón Teoría", font=ctk.CTkFont(size=10, weight="bold"), width=120).pack(side="left", padx=5)
+        ctk.CTkLabel(headers_frame, text="Prioridad", font=ctk.CTkFont(size=10, weight="bold"), width=90).pack(side="left", padx=5)
+        ctk.CTkLabel(headers_frame, text="🔬 Laboratorio", font=ctk.CTkFont(size=10, weight="bold"), width=120).pack(side="left", padx=5)
+        ctk.CTkLabel(headers_frame, text="Prioridad", font=ctk.CTkFont(size=10, weight="bold"), width=90).pack(side="left", padx=5)
         
-        salon_lab_var = ctk.StringVar(value=self.preferencias_profesores.get(profesor, {}).get('salon_lab', 'Sin preferencia'))
-        salon_lab_menu = ctk.CTkOptionMenu(
-            card,
-            variable=salon_lab_var,
-            values=['Sin preferencia'] + self.salones_lab,
-            width=120,
-            font=ctk.CTkFont(size=10)
-        )
-        salon_lab_menu.grid(row=2, column=1, padx=5, pady=5)
+        # Widgets para cada materia
+        self.widgets_preferencias[profesor] = {}
         
-        # Prioridad lab
-        prioridad_lab_var = ctk.StringVar(value=self.preferencias_profesores.get(profesor, {}).get('prioridad_lab', 'Opcional'))
-        prioridad_lab_menu = ctk.CTkOptionMenu(
-            card,
-            variable=prioridad_lab_var,
-            values=['Opcional', 'Prioritario'],
-            width=100,
-            font=ctk.CTkFont(size=10)
-        )
-        prioridad_lab_menu.grid(row=2, column=2, padx=5, pady=5)
+        # Cargar preferencias previas si existen
+        prefs_profesor = self.preferencias_profesores.get(profesor, {})
+        materias_prefs = prefs_profesor.get('materias', {})
         
-        self.widgets_preferencias[profesor] = {
-            'salon_teoria_var': salon_teoria_var,
-            'prioridad_teoria_var': prioridad_teoria_var,
-            'salon_lab_var': salon_lab_var,
-            'prioridad_lab_var': prioridad_lab_var
-        }
+        for materia in self.profesor_materias.get(profesor, []):
+            materia_frame = ctk.CTkFrame(materias_frame, fg_color=("#f0f0f0", "#2a2a3e"), height=40)
+            materia_frame.pack(fill="x", pady=2)
+            materia_frame.pack_propagate(False)
+            
+            # Nombre de la materia (truncado si es muy largo)
+            materia_display = materia if len(materia) <= 35 else materia[:32] + "..."
+            ctk.CTkLabel(
+                materia_frame,
+                text=materia_display,
+                font=ctk.CTkFont(size=9),
+                width=250,
+                anchor="w"
+            ).pack(side="left", padx=5)
+            
+            # Salón de teoría
+            salon_teoria_var = ctk.StringVar(
+                value=materias_prefs.get(materia, {}).get('salon_teoria', 'Sin preferencia')
+            )
+            salon_teoria_combo = ctk.CTkComboBox(
+                materia_frame,
+                variable=salon_teoria_var,
+                values=['Sin preferencia'] + self.salones_teoria,
+                width=120,
+                height=30,
+                font=ctk.CTkFont(size=9)
+            )
+            salon_teoria_combo.pack(side="left", padx=5)
+            
+            # Prioridad teoría
+            prioridad_teoria_var = ctk.StringVar(
+                value=materias_prefs.get(materia, {}).get('prioridad_teoria', 'Opcional')
+            )
+            prioridad_teoria_combo = ctk.CTkComboBox(
+                materia_frame,
+                variable=prioridad_teoria_var,
+                values=['Opcional', 'Prioritario'],
+                width=90,
+                height=30,
+                font=ctk.CTkFont(size=9)
+            )
+            prioridad_teoria_combo.pack(side="left", padx=5)
+            
+            # Laboratorio
+            salon_lab_var = ctk.StringVar(
+                value=materias_prefs.get(materia, {}).get('salon_lab', 'Sin preferencia')
+            )
+            salon_lab_combo = ctk.CTkComboBox(
+                materia_frame,
+                variable=salon_lab_var,
+                values=['Sin preferencia'] + self.salones_lab,
+                width=120,
+                height=30,
+                font=ctk.CTkFont(size=9)
+            )
+            salon_lab_combo.pack(side="left", padx=5)
+            
+            # Prioridad lab
+            prioridad_lab_var = ctk.StringVar(
+                value=materias_prefs.get(materia, {}).get('prioridad_lab', 'Opcional')
+            )
+            prioridad_lab_combo = ctk.CTkComboBox(
+                materia_frame,
+                variable=prioridad_lab_var,
+                values=['Opcional', 'Prioritario'],
+                width=90,
+                height=30,
+                font=ctk.CTkFont(size=9)
+            )
+            prioridad_lab_combo.pack(side="left", padx=5)
+            
+            # Guardar widgets
+            self.widgets_preferencias[profesor][materia] = {
+                'salon_teoria_var': salon_teoria_var,
+                'prioridad_teoria_var': prioridad_teoria_var,
+                'salon_lab_var': salon_lab_var,
+                'prioridad_lab_var': prioridad_lab_var
+            }
     
     def actualizar_distribucion(self, materia):
         """Actualiza la etiqueta de distribución"""
@@ -376,11 +472,15 @@ class ConfiguradorISC(ctk.CTk):
                         errores.append(f"{materia}: {teoria}+{lab} ≠ {total}")
                         continue
                     
+                    
+                    lab_asignado = widgets['lab_asignado_combo'].get()
+                    
                     config_materias[materia] = {
                         'total_horas': total,
                         'horas_teoria': teoria,
                         'horas_lab': lab,
-                        'distribucion': f"{teoria}+{lab}"
+                        'distribucion': f"{teoria}+{lab}",
+                        'laboratorio_asignado': lab_asignado if lab_asignado != "Sin asignar" else None
                     }
                 except ValueError:
                     errores.append(f"{materia}: valores inválidos")
@@ -392,22 +492,34 @@ class ConfiguradorISC(ctk.CTk):
                 )
                 return
             
-            # Guardar preferencias
+            
+            # Guardar preferencias (nueva estructura por materia)
             config_preferencias = {}
             
-            for profesor, widgets in self.widgets_preferencias.items():
-                salon_teoria = widgets['salon_teoria_var'].get()
-                prioridad_teoria = widgets['prioridad_teoria_var'].get()
-                salon_lab = widgets['salon_lab_var'].get()
-                prioridad_lab = widgets['prioridad_lab_var'].get()
+            for profesor, materias_widgets in self.widgets_preferencias.items():
+                materias_config = {}
+                tiene_preferencias = False
                 
-                # Solo guardar si hay preferencia
-                if salon_teoria != 'Sin preferencia' or salon_lab != 'Sin preferencia':
+                for materia, widgets in materias_widgets.items():
+                    salon_teoria = widgets['salon_teoria_var'].get()
+                    prioridad_teoria = widgets['prioridad_teoria_var'].get()
+                    salon_lab = widgets['salon_lab_var'].get()
+                    prioridad_lab = widgets['prioridad_lab_var'].get()
+                    
+                    # Solo guardar si hay alguna preferencia
+                    if salon_teoria != 'Sin preferencia' or salon_lab != 'Sin preferencia':
+                        materias_config[materia] = {
+                            'salon_teoria': salon_teoria,
+                            'prioridad_teoria': prioridad_teoria,
+                            'salon_lab': salon_lab,
+                            'prioridad_lab': prioridad_lab
+                        }
+                        tiene_preferencias = True
+                
+                # Solo guardar profesor si tiene al menos una preferencia
+                if tiene_preferencias:
                     config_preferencias[profesor] = {
-                        'salon_teoria': salon_teoria,
-                        'prioridad_teoria': prioridad_teoria,
-                        'salon_lab': salon_lab,
-                        'prioridad_lab': prioridad_lab
+                        'materias': materias_config
                     }
             
             # Guardar archivos

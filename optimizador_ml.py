@@ -415,7 +415,7 @@ class OptimizadorML:
         if es_lab != requiere_lab:
             return False
         
-        # 4. Validar preferencias prioritarias del profesor - NUEVO
+        # 4. Validar preferencias prioritarias del profesor (RESTRICCIÓN DURA)
         profesor = asignacion.get('profesor')
         tipo_requerido = asignacion.get('tipo_requerido', 'Teoría')
         
@@ -423,9 +423,10 @@ class OptimizadorML:
             pref_salon = obtener_preferencia_profesor(profesor, tipo_requerido, self.preferencias_profesores)
             es_prioritaria = es_preferencia_prioritaria(profesor, tipo_requerido, self.preferencias_profesores)
             
-            # Si hay preferencia prioritaria, DEBE usar ese salón
-            if es_prioritaria and pref_salon and pref_salon != salon:
-                return False
+            # Si hay preferencia PRIORITARIA, SOLO ese salón es válido (sin excepciones)
+            if es_prioritaria and pref_salon:
+                if salon != pref_salon:
+                    return False  # Rechazar cualquier otro salón
         
         # 5. Grupos de primer semestre (mismo salón para teoría)
         if asignacion.get('es_primer_semestre', False) and len(horario_actual) > 0:
