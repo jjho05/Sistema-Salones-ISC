@@ -230,10 +230,12 @@ Si deseas contribuir al desarrollo de la aplicación web:
 
 ## Contacto
 
-Para preguntas sobre el desarrollo web:
-- **Email**: sistemas@cdmadero.tecnm.mx
-- **Issues**: GitHub Issues
-- **Repositorio**: https://github.com/lic-ing-jesusolvera
+**Autor:** Jesús Olvera
+
+- **GitHub:** [@jjho05](https://github.com/jjho05)
+- **Email:** jjho.reivaj05@gmail.com / hernandez.jesusjavier.20.0770@gmail.com
+- **Repositorio:** https://github.com/jjho05/Sistema-Salones-ISC
+- **Institucional:** sistemas@cdmadero.tecnm.mx
 
 ## Licencia
 

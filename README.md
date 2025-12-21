@@ -182,19 +182,17 @@ Para contribuir al proyecto:
 4. Push a la rama
 5. Crea un Pull Request
 
-## Autor y Contacto
+## 👨‍💻 Autor
 
-**Desarrollado por:**
-- Ing. Jesús Olvera
-- Instituto Tecnológico de Ciudad Madero
-- Ingeniería en Sistemas Computacionales
+**Jesús Olvera**
 
-**Contacto:**
-- GitHub: [@lic-ing-jesusolvera](https://github.com/lic-ing-jesusolvera)
-- Email: sistemas@cdmadero.tecnm.mx
+- **GitHub:** [@jjho05](https://github.com/jjho05)
+- **Email:** jjho.reivaj05@gmail.com / hernandez.jesusjavier.20.0770@gmail.com
+- **Institución:** Instituto Tecnológico de Ciudad Madero
+- **Programa:** Ingeniería en Sistemas Computacionales
 
 **Repositorio:**
-- https://github.com/lic-ing-jesusolvera/Sistema-Salones-ISC
+- https://github.com/jjho05/Sistema-Salones-ISC
 
 ## Licencia
 

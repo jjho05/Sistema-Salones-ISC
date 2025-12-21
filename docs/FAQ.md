@@ -321,10 +321,11 @@ Ver `docs/WEB_APP_BETA.md` para detalles.
 
 ### ¿A quién contacto para soporte?
 
-- **Email**: sistemas@cdmadero.tecnm.mx
-- **GitHub**: [@lic-ing-jesusolvera](https://github.com/lic-ing-jesusolvera)
-- **Issues**: https://github.com/lic-ing-jesusolvera/Sistema-Salones-ISC/issues
-- **Interno**: Coordinación académica ISC - ITCM
+- **Autor:** Jesús Olvera
+- **GitHub:** [@jjho05](https://github.com/jjho05)
+- **Email:** jjho.reivaj05@gmail.com / hernandez.jesusjavier.20.0770@gmail.com
+- **Issues:** https://github.com/jjho05/Sistema-Salones-ISC/issues
+- **Institucional:** sistemas@cdmadero.tecnm.mx
 
 ### ¿El sistema tiene licencia?
 

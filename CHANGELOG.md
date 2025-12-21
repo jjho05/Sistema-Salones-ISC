@@ -266,16 +266,14 @@ ls -lh comparativas/final/
 
 ---
 
-## Contribuidores
+## 👨‍💻 Autor
 
-**Desarrollo Principal:**
-- Ing. Jesús Olvera ([@lic-ing-jesusolvera](https://github.com/lic-ing-jesusolvera))
-- Instituto Tecnológico de Ciudad Madero
-- Programa de Ingeniería en Sistemas Computacionales
+**Jesús Olvera**
 
-**Contacto:**
-- Email: sistemas@cdmadero.tecnm.mx
-- GitHub: https://github.com/lic-ing-jesusolvera
+- **GitHub:** [@jjho05](https://github.com/jjho05)
+- **Email:** jjho.reivaj05@gmail.com / hernandez.jesusjavier.20.0770@gmail.com
+- **Institución:** Instituto Tecnológico de Ciudad Madero
+- **Programa:** Ingeniería en Sistemas Computacionales
 
 **Agradecimientos:**
 - Coordinación académica ISC - ITCM
