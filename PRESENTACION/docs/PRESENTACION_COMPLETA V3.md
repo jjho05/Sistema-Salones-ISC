@@ -1786,11 +1786,24 @@ $$
 N(A) = \{A' : \exists c_i, c_j \in C, tipo(c_i) = tipo(c_j), A'(c_i) = A(c_j), A'(c_j) = A(c_i)\}
 $$
 
+**Donde:**
+- $N(A)$ = vecindario de la asignación $A$
+- $\exists$ = "existe" (cuantificador existencial)
+- $A'$ = asignación vecina (modificación de $A$)
+- $tipo(c_i) = tipo(c_j)$ = ambas clases del mismo tipo (ambas Teoría o ambas Lab)
+- $A'(c_i) = A(c_j)$ = intercambio de salones entre $c_i$ y $c_j$
+
 **Criterio de aceptación:** Descenso más pronunciado (steepest descent)
 
 $$
 A_{nuevo} = \arg\min_{A' \in N(A)} E(A')
 $$
+
+**Donde:**
+- $\arg\min$ = "argumento que minimiza" (la asignación que da el mínimo)
+- $A_{nuevo}$ = nueva asignación seleccionada
+- $E(A')$ = energía/costo de la asignación $A'$
+- Se elige el vecino con menor energía
 
 
 ---
