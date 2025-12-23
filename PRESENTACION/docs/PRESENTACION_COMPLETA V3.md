@@ -2724,6 +2724,273 @@ python3 ejemplos_didacticos/03_algoritmo_genetico.py
 
 **Próximo paso:** Convertir a Google Colab notebooks para interactividad
 
+
+---
+
+<!-- _class: lead blue -->
+# Documentación del Proyecto
+
+**Guías Completas de Instalación y Uso**
+
+---
+
+## 📚 Documentación Disponible
+
+El proyecto incluye **documentación completa** para facilitar su uso y comprensión:
+
+### Documentos Principales
+
+| Documento | Descripción | Ubicación |
+|-----------|-------------|-----------|
+| **README.md** | Guía principal del proyecto | Raíz |
+| **INSTALACION.md** | Guía de instalación detallada | Raíz |
+| **Estado del Arte** | Revisión de literatura | `literatura/` |
+| **Teoría Matemática** | Fundamentos formales | `literatura/` |
+| **Ejemplos Didácticos** | Código educativo | `ejemplos_didacticos/` |
+
+---
+
+## 📖 README.md - Guía Principal
+
+**Contenido del README:**
+
+- 🎯 Descripción general del problema
+- ✨ Características principales
+- 📚 Estado del Arte (15 artículos)
+- 🔢 Fundamentos matemáticos
+- 🤖 4 algoritmos explicados
+- 📖 Ejemplos didácticos
+- 🏗️ Arquitectura del sistema
+- 💻 Guía de instalación
+- 🚀 Instrucciones de uso
+- 📊 Resultados y métricas
+
+**Características:**
+- ✅ 486 líneas de documentación
+- ✅ Badges profesionales
+- ✅ Diagramas Mermaid
+- ✅ Tablas comparativas
+
+---
+
+## 💻 INSTALACION.md - Guía de Instalación
+
+**Cobertura:**
+
+### Sistemas Operativos
+- 🐧 **Linux/macOS:** Instrucciones paso a paso
+- 🪟 **Windows:** Guía específica con screenshots
+- 🐍 **Entornos virtuales:** Configuración recomendada
+
+### Contenido
+1. Requisitos previos
+2. Instalación por sistema operativo
+3. Configuración de entorno virtual
+4. Instalación de dependencias
+5. Verificación de instalación
+6. **Troubleshooting:** 9 problemas comunes resueltos
+
+---
+
+## 🐛 Troubleshooting - Problemas Comunes
+
+La guía incluye soluciones para:
+
+1. ❌ "python: command not found"
+2. ❌ "pip: command not found"
+3. ❌ "Permission denied"
+4. ❌ "ModuleNotFoundError: tkinter"
+5. ❌ Errores de compilación en Windows
+6. ❌ "SSL Certificate Error"
+7. ❌ Problemas con entornos virtuales
+8. ❌ Conflictos de versiones
+9. ❌ Errores de importación
+
+**Cada problema incluye:**
+- Descripción del error
+- Causa probable
+- Solución paso a paso
+- Comandos específicos
+
+---
+
+## 🔧 Script de Verificación
+
+**Incluido en INSTALACION.md:**
+
+```python
+# verificar_instalacion.py
+import sys
+
+def verificar_modulo(nombre):
+    try:
+        modulo = __import__(nombre)
+        version = getattr(modulo, '__version__', 'desconocida')
+        print(f"✅ {nombre:20} v{version}")
+        return True
+    except ImportError:
+        print(f"❌ {nombre:20} NO INSTALADO")
+        return False
+
+modulos = ['pandas', 'numpy', 'sklearn', 'matplotlib', 
+           'seaborn', 'openpyxl', 'flask']
+
+resultados = [verificar_modulo(m) for m in modulos]
+
+if all(resultados):
+    print("✅ TODAS LAS DEPENDENCIAS INSTALADAS")
+else:
+    print("❌ FALTAN DEPENDENCIAS")
+```
+
+---
+
+## 📦 Dependencias del Proyecto
+
+**requirements.txt:**
+
+```
+pandas==2.1.4
+numpy==1.26.2
+scikit-learn==1.3.2
+matplotlib==3.8.2
+seaborn==0.13.0
+openpyxl==3.1.2
+Flask==3.0.0
+reportlab==4.0.7
+fuzzywuzzy==0.18.0
+python-Levenshtein==0.23.0
+```
+
+**Instalación:**
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 🏗️ Estructura del Proyecto
+
+```
+Sistema-Salones-ISC/
+├── 📁 PRESENTACION/          # Esta presentación
+├── 📁 ejemplos_didacticos/   # Ejemplos Python
+├── 📁 literatura/            # Estado del arte
+├── 📁 datos_estructurados/   # Datos I/O
+├── 📁 comparativas/          # Resultados
+├── 📁 webapp/                # Interfaz web
+├── 📄 optimizador_*.py       # 3 algoritmos
+├── 📄 pre_asignar_p1.py     # Pre-asignación
+├── 📄 ejecutar_todos.py     # Script maestro
+├── 📄 requirements.txt      # Dependencias
+├── 📄 README.md             # Guía principal
+└── 📄 INSTALACION.md        # Guía instalación
+```
+
+---
+
+## 🚀 Opciones de Ejecución
+
+### Opción 1: Ejecución Completa (Recomendado)
+
+```bash
+python3 ejecutar_todos.py
+```
+
+**Ejecuta automáticamente:**
+1. Pre-asignación P1
+2. Optimizador Greedy
+3. Optimizador ML
+4. Optimizador Genético
+5. Corrección de prioridades
+6. Generación de comparativas
+
+---
+
+## 🚀 Opciones de Ejecución (continuación)
+
+### Opción 2: Ejecución Paso a Paso
+
+```bash
+# 1. Pre-asignar PRIORIDAD 1
+python3 pre_asignar_p1.py
+
+# 2. Ejecutar optimizador específico
+python3 optimizador_greedy.py
+
+# 3. Corregir (si necesario)
+python3 corregir_prioridades.py datos_estructurados/04_Horario_Optimizado_Greedy.csv
+
+# 4. Generar comparativas
+python3 generar_comparativa_completa.py
+```
+
+### Opción 3: Configuración Inicial
+
+```bash
+python3 configurador_materias.py
+```
+
+---
+
+## 📊 Salidas Generadas
+
+El sistema genera automáticamente:
+
+| Tipo | Descripción | Ubicación |
+|------|-------------|-----------|
+| **CSV** | Horarios optimizados | `datos_estructurados/` |
+| **Excel** | Horarios formateados | `comparativas/` |
+| **Gráficos** | Visualizaciones PNG | `comparativas/graficos/` |
+| **Comparativa** | Excel consolidado | `comparativas/` |
+| **Logs** | Salida de consola | Terminal |
+
+**Archivos principales:**
+- `00_Horario_PreAsignado_P1.csv`
+- `04_Horario_Optimizado_Greedy.csv`
+- `05_Horario_Optimizado_ML.csv`
+- `06_Horario_Optimizado_Genetico.csv`
+- `comparativa_completa.xlsx`
+
+---
+
+## 🔗 Enlaces a Documentación
+
+**GitHub Repository:**
+- 🔗 https://github.com/jjho05/Sistema-Salones-ISC
+
+**Documentos clave:**
+- 📄 [README.md](../../README.md)
+- 📄 [INSTALACION.md](../../INSTALACION.md)
+- 📄 [Estado del Arte](../../literatura/estado_del_arte.md)
+- 📄 [Teoría Matemática](../../literatura/teoria_matematica_detallada.md)
+- 📄 [Ejemplos Didácticos](../../ejemplos_didacticos/README.md)
+
+**Resúmenes de fases:**
+- 📄 [Fase 1: Estado del Arte](../../literatura/RESUMEN_FASE1.md)
+- 📄 [Fase 2: Teoría Matemática](../../literatura/RESUMEN_FASE2.md)
+- 📄 [Fase 4: Documentación](../../literatura/RESUMEN_FASE4.md)
+
+---
+
+## 📞 Soporte y Contacto
+
+**Autor:** Jesús Olvera
+
+- 🎓 Instituto Tecnológico de Ciudad Madero
+- 💼 GitHub: [@jjho05](https://github.com/jjho05)
+- 📧 Email: jjho.reivaj05@gmail.com
+
+**Para reportar problemas:**
+- 🐛 [GitHub Issues](https://github.com/jjho05/Sistema-Salones-ISC/issues)
+- 📧 Email directo
+- 💬 Discusiones en GitHub
+
+**Contribuciones bienvenidas:**
+- Fork → Branch → Commit → Push → Pull Request
+
+---
+
 ---
 # Algoritmo Greedy + Hill Climbing
 
