@@ -2725,8 +2725,6 @@ python3 ejemplos_didacticos/03_algoritmo_genetico.py
 **Próximo paso:** Convertir a Google Colab notebooks para interactividad
 
 ---
-
-<! _class: lead blue -->
 # Algoritmo Greedy + Hill Climbing
 
 **Construcción Voraz y Refinamiento Local**
