@@ -2989,6 +2989,277 @@ El sistema genera automáticamente:
 **Contribuciones bienvenidas:**
 - Fork → Branch → Commit → Push → Pull Request
 
+
+---
+
+<!-- _class: lead blue -->
+# Parámetros y Configuración
+
+**Ajuste y Optimización de Algoritmos**
+
+---
+
+## ⚙️ Parámetros por Algoritmo
+
+Cada algoritmo tiene parámetros críticos que afectan su rendimiento:
+
+| Algoritmo | Parámetros Principales | Valores Óptimos |
+|-----------|------------------------|-----------------|
+| **Greedy+HC** | Pesos, max_iteraciones | w=10, iter=1000 |
+| **ML** | n_estimators, max_depth | 100, 20 |
+| **Genético** | Población, prob_mutación | 100, 0.1 |
+
+**Documentación completa:** [`PARAMETROS.md`](../../PARAMETROS.md)
+
+---
+
+## 🔨 Greedy + Hill Climbing - Parámetros
+
+### Pesos de la Función Objetivo
+
+| Componente | Peso | Justificación |
+|------------|------|---------------|
+| **Movimientos** | 10.0 | Objetivo principal |
+| **Cambios de piso** | 5.0 | Importante secundario |
+| **Distancia** | 1.0 | Refinamiento fino |
+| **Penalización P2** | 50.0 | Soft constraint alta |
+| **Penalización P3** | 25.0 | Soft constraint baja |
+
+**Jerarquía:**
+```
+Movimientos (10.0) > Cambios Piso (5.0) > Distancia (1.0)
+```
+
+---
+
+## 🔨 Greedy + Hill Climbing - Convergencia
+
+### Criterios de Parada
+
+| Criterio | Valor | Descripción |
+|----------|-------|-------------|
+| **max_iteraciones** | 1000 | Máximo absoluto |
+| **max_sin_mejora** | 50 | Parada temprana |
+| **mejora_minima** | 0.01 | Umbral de mejora |
+
+**Convergencia típica:**
+- 200-400 iteraciones
+- ~30 segundos
+- Óptimo local garantizado
+
+---
+
+## 🤖 Machine Learning - Parámetros
+
+### Random Forest
+
+| Parámetro | Valor | Rango Probado | Resultado |
+|-----------|-------|---------------|-----------|
+| **n_estimators** | 100 | [50, 500] | 94% precisión |
+| **max_depth** | 20 | [10, None] | Evita overfitting |
+| **min_samples_split** | 5 | [2, 20] | Balance |
+
+**Curva de aprendizaje:**
+```
+Árboles: 10 → 50 → 100 → 200
+Precisión: 82% → 91% → 94% → 94.5%
+Tiempo: 1s → 5s → 10s → 20s
+```
+
+**Punto óptimo:** 100 árboles ✅
+
+---
+
+## 🤖 Machine Learning - Features
+
+### Features Extraídas
+
+| Feature | Tipo | Importancia |
+|---------|------|-------------|
+| **num_estudiantes** | Numérico | 35% |
+| **tipo_clase** | Categórico | 25% |
+| **hora_dia** | Numérico | 15% |
+| **profesor_id** | Categórico | 15% |
+| **dia_semana** | Categórico | 10% |
+
+**Normalización:** Todos los valores en [0, 1]
+
+---
+
+## 🧬 Algoritmo Genético - Parámetros
+
+### Población y Evolución
+
+| Parámetro | Valor | Justificación |
+|-----------|-------|---------------|
+| **Población** | 100 | Balance diversidad/tiempo |
+| **Generaciones** | 200 | Convergencia completa |
+| **Elitismo** | 5 | Preserva mejores |
+| **Prob. cruce** | 0.8 | Alta exploración |
+| **Prob. mutación** | 0.1 | Balance |
+
+**Tiempo total:** ~74 segundos
+
+---
+
+## 🧬 Algoritmo Genético - Operadores
+
+### Cruce y Mutación
+
+**Cruce de un punto:**
+```python
+punto = len(padre1) // 2
+hijo1 = padre1[:punto] + padre2[punto:]
+hijo2 = padre2[:punto] + padre1[punto:]
+```
+
+**Mutación:**
+```python
+for i in range(len(individuo)):
+    if random.random() < prob_mutacion:
+        individuo[i] = salon_aleatorio_compatible()
+```
+
+**Selección:** Torneo de tamaño 3
+
+---
+
+## 📊 Análisis de Sensibilidad
+
+### Experimento 1: Pesos (Greedy+HC)
+
+| w_movimientos | Movimientos | Energía Total |
+|---------------|-------------|---------------|
+| 5.0 | 320 | 5780 |
+| **10.0** | **314** | **5181** ✅ |
+| 15.0 | 312 | 6045 |
+| 20.0 | 310 | 7285 |
+
+**Conclusión:** w=10.0 es óptimo
+
+---
+
+## 📊 Análisis de Sensibilidad (cont.)
+
+### Experimento 2: Población (Genético)
+
+| Población | Tiempo | Mejor Fitness |
+|-----------|--------|---------------|
+| 20 | 15s | 0.042 |
+| 50 | 35s | 0.047 |
+| **100** | **74s** | **0.050** ✅ |
+| 200 | 150s | 0.051 |
+
+**Conclusión:** 100 es punto óptimo
+
+### Experimento 3: Árboles (ML)
+
+| n_estimators | Precisión | Tiempo |
+|--------------|-----------|--------|
+| 50 | 91% | 5s |
+| **100** | **94%** | **10s** ✅ |
+| 200 | 94.5% | 20s |
+
+**Conclusión:** 100 árboles suficiente
+
+---
+
+## 🔧 Proceso de Tuning
+
+### Metodología Aplicada
+
+1. **Grid Search Grueso**
+   - Probar rangos amplios
+   - Identificar regiones prometedoras
+
+2. **Refinamiento Local**
+   - Ajuste fino en vecindario
+   - Optimización de valores
+
+3. **Validación Cruzada**
+   - 10 ejecuciones con diferentes semillas
+   - Calcular media y desviación estándar
+
+**Tiempo invertido:** ~55 horas de cómputo
+
+---
+
+## 🔧 Resultados del Tuning
+
+### Mejoras Logradas
+
+| Algoritmo | Métrica | Antes | Después | Mejora |
+|-----------|---------|-------|---------|--------|
+| **Greedy+HC** | Energía | 6500 | 5181 | **-20%** |
+| **ML** | Precisión | 82% | 94% | **+12%** |
+| **Genético** | Tiempo | 95s | 74s | **-22%** |
+
+**Conclusión:** Tuning crítico para rendimiento óptimo
+
+---
+
+## 📋 Criterios de Convergencia
+
+### Por Algoritmo
+
+| Algoritmo | Criterio Principal | Valor |
+|-----------|-------------------|-------|
+| **Greedy+HC** | Sin mejora en N iter | 50 |
+| **ML** | Validación cruzada | 94% |
+| **Genético** | Max generaciones | 200 |
+
+**Todos incluyen:**
+- Máximo de iteraciones/generaciones
+- Criterio de parada temprana
+- Umbral de mejora mínima
+
+---
+
+## 🎯 Guía de Ajuste Rápido
+
+### ¿Cuándo ajustar?
+
+**Ajustar si:**
+- ✅ Resultados no satisfactorios
+- ✅ Tiempo de ejecución excesivo
+- ✅ Convergencia prematura
+
+**Tabla de referencia:**
+
+| Problema | Parámetro | Acción |
+|----------|-----------|--------|
+| Convergencia lenta | max_iteraciones | ↑ |
+| Tiempo excesivo | tam_poblacion | ↓ |
+| Baja precisión | n_estimators | ↑ |
+| Movimientos altos | w_movimientos | ↑ |
+
+---
+
+## 📊 Resumen de Parámetros
+
+### Configuración Óptima Final
+
+```python
+# Greedy + Hill Climbing
+PESOS = {
+    'movimientos': 10.0,
+    'cambios_piso': 5.0,
+    'distancia': 1.0
+}
+MAX_ITER = 1000
+MAX_SIN_MEJORA = 50
+
+# Machine Learning
+N_ESTIMATORS = 100
+MAX_DEPTH = 20
+
+# Algoritmo Genético
+POBLACION = 100
+GENERACIONES = 200
+PROB_CRUCE = 0.8
+PROB_MUTACION = 0.1
+```
+
 ---
 
 ---
