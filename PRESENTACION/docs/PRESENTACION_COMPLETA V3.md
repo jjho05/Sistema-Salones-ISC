@@ -1074,6 +1074,8 @@ Preferencias:
 - Datos reales validados (ITCM, 680 clases)
 - Documentación completa
 
+---
+
 ### 5. Validación Estadística Rigurosa
 - 30+ corridas por algoritmo
 - Pruebas de normalidad, ANOVA, post-hoc
