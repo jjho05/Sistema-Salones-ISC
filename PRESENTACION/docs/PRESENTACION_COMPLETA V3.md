@@ -1406,6 +1406,8 @@ El problema de asignación de salones es un **problema de optimización combinat
 - Conjunto de restricciones $R$
 - Función de costo $f: C \times S \rightarrow \mathbb{R}$
 
+---
+
 **Donde:**
 - $C, S$ = conjuntos de clases y salones
 - $R$ = conjunto de restricciones (duras y suaves)
@@ -1415,6 +1417,7 @@ El problema de asignación de salones es un **problema de optimización combinat
 
 **Salida:**
 - Asignación $A: C \rightarrow S$ que minimiza $f$ sujeto a $R$
+---
 
 **Donde:**
 - $A$ = función de asignación que mapea cada clase a un salón
@@ -1432,6 +1435,8 @@ Este problema pertenece a la familia de **problemas NP-difíciles**, específica
 - **Complejidad:** NP-completo
 - **Espacio de búsqueda:** $O(m^n)$ donde $m$ = salones, $n$ = clases
 - **Ejemplo:** Para 680 clases y 21 salones: $21^{680} \approx 10^{900}$ combinaciones
+
+---
 
 **Donde:**
 - $O(m^n)$ = notación Big-O (orden de magnitud)
@@ -1456,6 +1461,8 @@ Este problema pertenece a la familia de **problemas NP-difíciles**, específica
    $$\forall c \in C: capacidad(A(c)) \geq estudiantes(c)$$
 
    **Donde:** $\geq$ = mayor o igual que
+
+---
 
 3. **Tipo de salón:** Debe coincidir con el tipo de clase
    $$\forall c \in C: tipo(A(c)) = tipo\_requerido(c)$$
@@ -1496,6 +1503,8 @@ $$
 E(A) = w_1 \cdot movimientos(A) + w_2 \cdot cambios\_piso(A) + w_3 \cdot distancia(A) + \sum_{i} w_i \cdot penalizacion_i(A)
 $$
 
+---
+
 **Donde:**
 - $E(A)$ = energía/costo total de la asignación $A$
 - $w_i$ = pesos de cada componente (importancia relativa)
@@ -1504,7 +1513,8 @@ $$
 - $cambios\_piso(A)$ = número de cambios de piso
 - $distancia(A)$ = distancia total recorrida
 - $\sum_{i} w_i \cdot penalizacion_i(A)$ = suma de todas las penalizaciones
-- **Objetivo:** $minimize\ E(A)$ = encontrar la asignación con menor costo
+
+**Objetivo:** $minimize\ E(A)$ = encontrar la asignación con menor costo
 
 ---
 ### 2.2 Componentes de la Función
