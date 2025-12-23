@@ -611,17 +611,22 @@ Preferencias:
 
 **Autores:** Pillay, N., & Qu, R. (2018)  
 **Fuente:** Springer - Hyper-Heuristics  
-**Enfoque:** Algoritmos genéticos con operadores adaptativos
+**Enfoque:** Algoritmos genéticos con operadores adaptativos  
+**Resultados:** Mejora del 15-20% vs. algoritmos tradicionales
+
+---
+
+### Artículo 1: Genetic Algorithms (Análisis)
 
 **Fortalezas:**
-- Manejo efectivo de restricciones duras y suaves
-- Operadores de cruce especializados
-- Buena escalabilidad
+- ✅ Manejo efectivo de restricciones duras y suaves
+- ✅ Operadores de cruce especializados
+- ✅ Buena escalabilidad
 
 **Debilidades:**
-- Tiempo de ejecución alto (>5 min para 500 clases)
-- Requiere ajuste manual de parámetros
-- No garantiza cumplimiento 100% de prioridades
+- ❌ Tiempo de ejecución alto (>5 min para 500 clases)
+- ❌ Requiere ajuste manual de parámetros
+- ❌ No garantiza cumplimiento 100% de prioridades
 
 ---
 
@@ -629,18 +634,22 @@ Preferencias:
 
 **Autores:** Kristiansen, S., Sørensen, M., & Stidsen, T. (2020)  
 **Fuente:** European Journal of Operational Research  
-**Enfoque:** Random Forest + Reinforcement Learning
-
+**Enfoque:** Random Forest + Reinforcement Learning  
 **Resultados:** 85% de precisión en predicción de asignaciones óptimas
 
+---
+
+### Artículo 2: Machine Learning (Análisis)
+
 **Fortalezas:**
-- Aprende de soluciones históricas
-- Rápido en predicción (<10s)
-- Adaptable a diferentes instituciones
+- ✅ Aprende de soluciones históricas
+- ✅ Rápido en predicción (<10s)
+- ✅ Adaptable a diferentes instituciones
 
 **Debilidades:**
-- Requiere dataset de entrenamiento grande
-- No maneja restricciones nuevas sin reentrenamiento
+- ❌ Requiere dataset de entrenamiento grande
+- ❌ No maneja restricciones nuevas sin reentrenamiento
+- ❌ Calidad depende de datos históricos
 
 ---
 
@@ -648,19 +657,22 @@ Preferencias:
 
 **Autores:** Bellio, R., Ceschia, S., Di Gaspero, L., & Schaerf, A. (2021)  
 **Fuente:** Computers & Operations Research  
-**Enfoque:** Simulated Annealing + Tabu Search
-
+**Enfoque:** Simulated Annealing + Tabu Search  
 **Resultados:** Top 3 en International Timetabling Competition
 
+---
+
+### Artículo 3: Hybrid Metaheuristics (Análisis)
+
 **Fortalezas:**
-- Excelente calidad de soluciones
-- Robusto ante diferentes instancias
-- Bien documentado
+- ✅ Excelente calidad de soluciones
+- ✅ Robusto ante diferentes instancias
+- ✅ Bien documentado
 
 **Debilidades:**
-- Complejidad de implementación alta
-- Muchos parámetros a ajustar
-- No considera preferencias jerárquicas
+- ❌ Complejidad de implementación alta
+- ❌ Muchos parámetros a ajustar
+- ❌ No considera preferencias jerárquicas
 
 ---
 
@@ -668,18 +680,22 @@ Preferencias:
 
 **Autores:** Burke, E. K., Mareček, J., Parkes, A. J., & Rudová, H. (2019)  
 **Fuente:** Journal of Scheduling  
-**Enfoque:** Construcción greedy + Hill Climbing
-
+**Enfoque:** Construcción greedy + Hill Climbing  
 **Resultados:** Soluciones factibles en <1 minuto
 
+---
+
+### Artículo 4: Greedy with Local Search (Análisis)
+
 **Fortalezas:**
-- Muy rápido
-- Fácil de implementar
-- Buenas soluciones iniciales
+- ✅ Muy rápido
+- ✅ Fácil de implementar
+- ✅ Buenas soluciones iniciales
 
 **Debilidades:**
-- Puede quedar atrapado en óptimos locales
-- Calidad variable según orden de construcción
+- ❌ Puede quedar atrapado en óptimos locales
+- ❌ Calidad variable según orden de construcción
+- ❌ No explora ampliamente el espacio de búsqueda
 
 ---
 
@@ -687,19 +703,22 @@ Preferencias:
 
 **Autores:** Santos, H. G., Uchoa, E., Ochi, L. S., & Maculan, N. (2022)  
 **Fuente:** INFORMS Journal on Computing  
-**Enfoque:** Programación Lineal Entera (ILP)
-
+**Enfoque:** Programación Lineal Entera (ILP)  
 **Resultados:** Soluciones óptimas garantizadas para <200 clases
 
+---
+
+### Artículo 5: Integer Programming (Análisis)
+
 **Fortalezas:**
-- Garantiza optimalidad
-- Manejo riguroso de restricciones
-- Soluciones verificables matemáticamente
+- ✅ Garantiza optimalidad
+- ✅ Manejo riguroso de restricciones
+- ✅ Soluciones verificables matemáticamente
 
 **Debilidades:**
-- No escala a problemas grandes (>300 clases)
-- Tiempo exponencial en peor caso
-- Requiere software especializado (CPLEX, Gurobi)
+- ❌ No escala a problemas grandes (>300 clases)
+- ❌ Tiempo exponencial en peor caso
+- ❌ Requiere software especializado (CPLEX, Gurobi)
 
 ---
 
@@ -707,19 +726,22 @@ Preferencias:
 
 **Autores:** Zhang, C., Song, W., Cao, Z., et al. (2023)  
 **Fuente:** IEEE Transactions on Neural Networks  
-**Enfoque:** Deep Q-Learning con Graph Neural Networks
-
+**Enfoque:** Deep Q-Learning con Graph Neural Networks  
 **Resultados:** 92% de eficiencia vs. métodos tradicionales
 
+---
+
+### Artículo 6: Deep Reinforcement Learning (Análisis)
+
 **Fortalezas:**
-- Estado del arte en ML
-- Maneja incertidumbre
-- Aprende políticas generalizables
+- ✅ Estado del arte en ML
+- ✅ Maneja incertidumbre
+- ✅ Aprende políticas generalizables
 
 **Debilidades:**
-- Requiere GPU para entrenamiento
-- Caja negra (difícil de interpretar)
-- Necesita miles de episodios de entrenamiento
+- ❌ Requiere GPU para entrenamiento
+- ❌ Caja negra (difícil de interpretar)
+- ❌ Necesita miles de episodios de entrenamiento
 
 ---
 
@@ -727,19 +749,22 @@ Preferencias:
 
 **Autores:** Fonseca, G. H., Santos, H. G., & Carrano, E. G. (2020)  
 **Fuente:** Applied Soft Computing  
-**Enfoque:** NSGA-II para optimización multi-objetivo
-
+**Enfoque:** NSGA-II para optimización multi-objetivo  
 **Resultados:** Frente de Pareto con 50+ soluciones no-dominadas
 
+---
+
+### Artículo 7: Multi-Objective Evolution (Análisis)
+
 **Fortalezas:**
-- Explora trade-offs entre objetivos
-- Ofrece múltiples soluciones al usuario
-- Flexible
+- ✅ Explora trade-offs entre objetivos
+- ✅ Ofrece múltiples soluciones al usuario
+- ✅ Flexible
 
 **Debilidades:**
-- Difícil seleccionar solución final
-- Computacionalmente costoso
-- Requiere normalización de objetivos
+- ❌ Difícil seleccionar solución final
+- ❌ Computacionalmente costoso
+- ❌ Requiere normalización de objetivos
 
 ---
 
@@ -747,18 +772,22 @@ Preferencias:
 
 **Autores:** Müller, T., & Murray, K. (2021)  
 **Fuente:** Constraints Journal  
-**Enfoque:** Constraint Satisfaction Problem (CSP)
-
+**Enfoque:** Constraint Satisfaction Problem (CSP)  
 **Resultados:** 98% de restricciones satisfechas
 
+---
+
+### Artículo 8: Constraint Programming (Análisis)
+
 **Fortalezas:**
-- Modelado declarativo natural
-- Propagación automática de restricciones
-- Bueno para problemas altamente restringidos
+- ✅ Modelado declarativo natural
+- ✅ Propagación automática de restricciones
+- ✅ Bueno para problemas altamente restringidos
 
 **Debilidades:**
-- Puede no encontrar solución si es muy restringido
-- Optimización limitada
+- ❌ Puede no encontrar solución si es muy restringido
+- ❌ Optimización limitada
+- ❌ Requiere expertise en CP
 
 ---
 
@@ -766,19 +795,22 @@ Preferencias:
 
 **Autores:** Sørensen, M., & Dahms, F. H. (2022)  
 **Fuente:** European Journal of Operational Research  
-**Enfoque:** ALNS con múltiples operadores
-
+**Enfoque:** ALNS con múltiples operadores  
 **Resultados:** Mejora del 25% en calidad vs. métodos clásicos
 
+---
+
+### Artículo 9: ALNS (Análisis)
+
 **Fortalezas:**
-- Muy efectivo en problemas grandes
-- Auto-adaptativo
-- Balance exploración/explotación
+- ✅ Muy efectivo en problemas grandes
+- ✅ Auto-adaptativo
+- ✅ Balance exploración/explotación
 
 **Debilidades:**
-- Implementación compleja
-- Muchos operadores a diseñar
-- Sensible a configuración inicial
+- ❌ Implementación compleja
+- ❌ Muchos operadores a diseñar
+- ❌ Sensible a configuración inicial
 
 ---
 
@@ -786,19 +818,22 @@ Preferencias:
 
 **Autores:** Tan, J. S., Goh, S. L., Kendall, G., & Sabar, N. R. (2023)  
 **Fuente:** Expert Systems with Applications  
-**Enfoque:** GA + Simulated Annealing
-
+**Enfoque:** GA + Simulated Annealing  
 **Resultados:** 95% de satisfacción de preferencias
 
+---
+
+### Artículo 10: Hybrid GA (Análisis)
+
 **Fortalezas:**
-- Combina exploración global y local
-- Maneja preferencias soft
-- Resultados consistentes
+- ✅ Combina exploración global y local
+- ✅ Maneja preferencias soft
+- ✅ Resultados consistentes
 
 **Debilidades:**
-- Dos conjuntos de parámetros a ajustar
-- Tiempo de ejecución medio-alto
-- No garantiza cumplimiento total de prioridades
+- ❌ Dos conjuntos de parámetros a ajustar
+- ❌ Tiempo de ejecución medio-alto
+- ❌ No garantiza cumplimiento total de prioridades
 
 ---
 
@@ -806,19 +841,22 @@ Preferencias:
 
 **Autores:** Lewis, R., & Thompson, J. (2019)  
 **Fuente:** Discrete Applied Mathematics  
-**Enfoque:** Graph coloring con backtracking
-
+**Enfoque:** Graph coloring con backtracking  
 **Resultados:** Soluciones óptimas para grafos con <500 nodos
 
+---
+
+### Artículo 11: Graph Coloring (Análisis)
+
 **Fortalezas:**
-- Fundamentación teórica sólida
-- Algoritmos bien estudiados
-- Garantías de correctitud
+- ✅ Fundamentación teórica sólida
+- ✅ Algoritmos bien estudiados
+- ✅ Garantías de correctitud
 
 **Debilidades:**
-- Modelado limitado (solo conflictos temporales)
-- No captura preferencias
-- Escalabilidad limitada
+- ❌ Modelado limitado (solo conflictos temporales)
+- ❌ No captura preferencias
+- ❌ Escalabilidad limitada
 
 ---
 
@@ -826,19 +864,22 @@ Preferencias:
 
 **Autores:** Qu, R., Burke, E. K., & McCollum, B. (2020)  
 **Fuente:** Annals of Operations Research  
-**Enfoque:** Algoritmo memético (GA + búsqueda local)
-
+**Enfoque:** Algoritmo memético (GA + búsqueda local)  
 **Resultados:** Top 5 en ITC 2019 benchmark
 
+---
+
+### Artículo 12: Memetic Algorithms (Análisis)
+
 **Fortalezas:**
-- Balance entre diversidad y calidad
-- Búsqueda local mejora individuos
-- Robusto
+- ✅ Balance entre diversidad y calidad
+- ✅ Búsqueda local mejora individuos
+- ✅ Robusto
 
 **Debilidades:**
-- Computacionalmente intensivo
-- Requiere diseño cuidadoso de operadores
-- Convergencia lenta
+- ❌ Computacionalmente intensivo
+- ❌ Requiere diseño cuidadoso de operadores
+- ❌ Convergencia lenta
 
 ---
 
@@ -846,19 +887,22 @@ Preferencias:
 
 **Autores:** Shiau, D. F. (2021)  
 **Fuente:** Applied Intelligence  
-**Enfoque:** PSO con velocidad adaptativa
-
+**Enfoque:** PSO con velocidad adaptativa  
 **Resultados:** Convergencia rápida en <100 iteraciones
 
+---
+
+### Artículo 13: PSO (Análisis)
+
 **Fortalezas:**
-- Pocos parámetros
-- Fácil de implementar
-- Buena convergencia
+- ✅ Pocos parámetros
+- ✅ Fácil de implementar
+- ✅ Buena convergencia
 
 **Debilidades:**
-- Puede converger prematuramente
-- Difícil manejar restricciones duras
-- Representación de soluciones no trivial
+- ❌ Puede converger prematuramente
+- ❌ Difícil manejar restricciones duras
+- ❌ Representación de soluciones no trivial
 
 ---
 
@@ -866,19 +910,22 @@ Preferencias:
 
 **Autores:** Sánchez-Oro, J., Sevaux, M., Rossi, A., & Martí, R. (2022)  
 **Fuente:** Computers & Operations Research  
-**Enfoque:** VNS con múltiples vecindarios
-
+**Enfoque:** VNS con múltiples vecindarios  
 **Resultados:** 30% mejor que búsqueda local simple
 
+---
+
+### Artículo 14: VNS (Análisis)
+
 **Fortalezas:**
-- Escapa óptimos locales sistemáticamente
-- Flexible en definición de vecindarios
-- No requiere parámetros complejos
+- ✅ Escapa óptimos locales sistemáticamente
+- ✅ Flexible en definición de vecindarios
+- ✅ No requiere parámetros complejos
 
 **Debilidades:**
-- Diseño de vecindarios es crítico
-- Puede ser lento si vecindarios son grandes
-- No hay garantías teóricas
+- ❌ Diseño de vecindarios es crítico
+- ❌ Puede ser lento si vecindarios son grandes
+- ❌ No hay garantías teóricas
 
 ---
 
@@ -886,55 +933,66 @@ Preferencias:
 
 **Autores:** Socha, K., Knowles, J., & Samples, M. (2019)  
 **Fuente:** Swarm Intelligence  
-**Enfoque:** ACO con feromonas adaptativas
-
+**Enfoque:** ACO con feromonas adaptativas  
 **Resultados:** Buenas soluciones en tiempo razonable
 
+---
+
+### Artículo 15: ACO (Análisis)
+
 **Fortalezas:**
-- Inspiración biológica interesante
-- Encuentra múltiples soluciones
-- Paralelizable
+- ✅ Inspiración biológica interesante
+- ✅ Encuentra múltiples soluciones
+- ✅ Paralelizable
 
 **Debilidades:**
-- Muchos parámetros (α, β, ρ, Q)
-- Convergencia puede ser lenta
-- Difícil ajustar para problemas específicos
+- ❌ Muchos parámetros (α, β, ρ, Q)
+- ❌ Convergencia puede ser lenta
+- ❌ Difícil ajustar para problemas específicos
 
 ---
 
-## Tabla Comparativa - Estado del Arte
+## Tabla Comparativa - Estado del Arte (1/4)
 
-| # | Autores | Año | Enfoque | Tamaño | Tiempo | Calidad | Garantías P1 | Escalabilidad |
-|---|---------|-----|---------|--------|--------|---------|--------------|---------------|
-| 1 | Pillay & Qu | 2018 | Genetic Algorithm | 300-500 | >5 min | Alta | ❌ No | ⭐⭐⭐ |
-| 2 | Kristiansen et al. | 2020 | Random Forest + RL | 400-600 | <10s | Media | ❌ No | ⭐⭐⭐⭐ |
-| 3 | Bellio et al. | 2021 | SA + Tabu Search | 200-400 | 2-5 min | Muy Alta | ❌ No | ⭐⭐⭐ |
-| 4 | Burke et al. | 2019 | Greedy + HC | 300-500 | <1 min | Media | ❌ No | ⭐⭐⭐⭐ |
-| 5 | Santos et al. | 2022 | Integer Programming | <200 | Variable | Óptima | ✅ Sí | ⭐ |
-
----
-
-## Tabla Comparativa (continuación)
-
-| # | Autores | Año | Enfoque | Tamaño | Tiempo | Calidad | Garantías P1 | Escalabilidad |
-|---|---------|-----|---------|--------|--------|---------|--------------|---------------|
-| 6 | Zhang et al. | 2023 | Deep Q-Learning | 500+ | Training: hrs | Alta | ❌ No | ⭐⭐⭐⭐⭐ |
-| 7 | Fonseca et al. | 2020 | NSGA-II | 300-400 | 3-7 min | Alta | ❌ No | ⭐⭐⭐ |
-| 8 | Müller & Murray | 2021 | Constraint Prog. | 200-300 | Variable | Alta | ⚠️ Parcial | ⭐⭐ |
-| 9 | Sørensen & Dahms | 2022 | ALNS | 500-1000 | 5-10 min | Muy Alta | ❌ No | ⭐⭐⭐⭐⭐ |
-| 10 | Tan et al. | 2023 | GA + SA Hybrid | 400-600 | 3-6 min | Alta | ⚠️ 95% | ⭐⭐⭐⭐ |
+| # | Autores | Año | Enfoque | Tamaño | Tiempo | Garantías P1 |
+|---|---------|-----|---------|--------|--------|--------------|
+| 1 | Pillay & Qu | 2018 | Genetic Algorithm | 300-500 | >5 min | ❌ No |
+| 2 | Kristiansen et al. | 2020 | Random Forest + RL | 400-600 | <10s | ❌ No |
+| 3 | Bellio et al. | 2021 | SA + Tabu Search | 200-400 | 2-5 min | ❌ No |
+| 4 | Burke et al. | 2019 | Greedy + HC | 300-500 | <1 min | ❌ No |
 
 ---
 
-## Tabla Comparativa (continuación 2)
+## Tabla Comparativa - Estado del Arte (2/4)
 
-| # | Autores | Año | Enfoque | Tamaño | Tiempo | Calidad | Garantías P1 | Escalabilidad |
-|---|---------|-----|---------|--------|--------|---------|--------------|---------------|
-| 11 | Lewis & Thompson | 2019 | Graph Coloring | <500 | <2 min | Óptima | ❌ No | ⭐⭐ |
-| 12 | Qu et al. | 2020 | Memetic Algorithm | 300-500 | 5-8 min | Muy Alta | ❌ No | ⭐⭐⭐ |
-| 13 | Shiau | 2021 | PSO | 200-400 | <2 min | Media | ❌ No | ⭐⭐⭐ |
-| 14 | Sánchez-Oro et al. | 2022 | VNS | 400-700 | 3-5 min | Alta | ❌ No | ⭐⭐⭐⭐ |
-| 15 | Socha et al. | 2019 | Ant Colony | 300-500 | 4-6 min | Media-Alta | ❌ No | ⭐⭐⭐ |
+| # | Autores | Año | Enfoque | Tamaño | Tiempo | Garantías P1 |
+|---|---------|-----|---------|--------|--------|--------------|
+| 5 | Santos et al. | 2022 | Integer Programming | <200 | Variable | ✅ Sí |
+| 6 | Zhang et al. | 2023 | Deep Q-Learning | 500+ | Training: hrs | ❌ No |
+| 7 | Fonseca et al. | 2020 | NSGA-II | 300-400 | 3-7 min | ❌ No |
+| 8 | Müller & Murray | 2021 | Constraint Prog. | 200-300 | Variable | ⚠️ Parcial |
+
+---
+
+## Tabla Comparativa - Estado del Arte (3/4)
+
+| # | Autores | Año | Enfoque | Tamaño | Tiempo | Garantías P1 |
+|---|---------|-----|---------|--------|--------|--------------|
+| 9 | Sørensen & Dahms | 2022 | ALNS | 500-1000 | 5-10 min | ❌ No |
+| 10 | Tan et al. | 2023 | GA + SA Hybrid | 400-600 | 3-6 min | ⚠️ 95% |
+| 11 | Lewis & Thompson | 2019 | Graph Coloring | <500 | <2 min | ❌ No |
+| 12 | Qu et al. | 2020 | Memetic Algorithm | 300-500 | 5-8 min | ❌ No |
+
+---
+
+## Tabla Comparativa - Estado del Arte (4/4)
+
+| # | Autores | Año | Enfoque | Tamaño | Tiempo | Garantías P1 |
+|---|---------|-----|---------|--------|--------|--------------|
+| 13 | Shiau | 2021 | PSO | 200-400 | <2 min | ❌ No |
+| 14 | Sánchez-Oro et al. | 2022 | VNS | 400-700 | 3-5 min | ❌ No |
+| 15 | Socha et al. | 2019 | Ant Colony | 300-500 | 4-6 min | ❌ No |
+| **NUESTRO** | **Olvera** | **2025** | **Multi-Algoritmo** | **680** | **16-74s** | **✅ 100%** |
 
 ---
 
@@ -977,6 +1035,8 @@ Preferencias:
 - ❌ Enfoque típico: minimizar conflictos generales
 - ❌ Poco énfasis en bienestar del profesor
 - ✅ **Nuestro enfoque:** Movimientos, cambios de piso, distancia
+
+---
 
 **5. Validación Estadística**
 - ❌ Muchos reportan 1 corrida o promedio simple
