@@ -280,6 +280,7 @@ E_{soft} &\leq 50 \times v_s + \text{otros términos suaves}
 $$
 
 Para que $E_{hard} > E_{soft}$ siempre:
+
 $$
 300 \times v_h > 50 \times v_s \Rightarrow v_h > \frac{v_s}{6}
 $$
