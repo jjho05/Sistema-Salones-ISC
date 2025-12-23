@@ -2511,8 +2511,6 @@ Es un componente **crítico** que hace posible el enfoque de prioridades jerárq
 
 ---
 
-<!-- _class: lead blue -->
-# Documentación del Proyecto
 
 **Guías Completas de Instalación y Uso**
 
