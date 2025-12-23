@@ -255,6 +255,13 @@ H &= \{0700, 0800, ..., 2100\} &&\text{Bloques horarios}
 \end{align}
 $$
 
+**Donde:**
+- $n = 680$ (número total de clases)
+- $m = 21$ (número de salones disponibles)
+- $k \approx 30$ (número de profesores)
+- $\{c_1, c_2, ..., c_n\}$ denota el conjunto de todas las clases
+- $\in$ significa "pertenece a" o "es elemento de"
+
 ---
 
 ## Atributos de Clases
@@ -273,6 +280,13 @@ estudiantes(c_i) &\in \mathbb{N} &&\text{Numero de estudiantes}
 \end{align}
 $$
 
+**Donde:**
+- $c_i$ = clase individual (ejemplo: $c_1, c_2, ..., c_{680}$)
+- $dia(c_i)$ = función que retorna el día de la clase $c_i$
+- $\mathbb{N}$ = números naturales (1, 2, 3, ...)
+- $M$ = conjunto de todas las materias
+- $G$ = conjunto de todos los grupos
+
 ---
 
 ## Atributos de Salones
@@ -288,6 +302,11 @@ ubicacion(s_j) &\in \mathbb{R}^2 &&\text{Coordenadas fisicas}
 \end{align}
 $$
 
+**Donde:**
+- $s_j$ = salón individual (ejemplo: FF1, FF2, LAB1, ...)
+- $\mathbb{R}^2$ = plano de coordenadas reales (x, y)
+- $\{0, 1\}$ = conjunto con dos elementos (0 = planta baja, 1 = planta alta)
+
 ---
 
 **Variable de Decisión:**
@@ -296,7 +315,11 @@ $$
 A: C \rightarrow S
 $$
 
-Donde $A(c_i) = s_j$ significa que la clase $c_i$ se imparte en el salón $s_j$
+**Donde:**
+- $A$ = función de asignación
+- $C \rightarrow S$ = función que mapea de clases a salones
+- $A(c_i) = s_j$ significa que la clase $c_i$ se imparte en el salón $s_j$
+- $\rightarrow$ = símbolo de función ("mapea a")
 
 ---
 
@@ -309,10 +332,21 @@ $$
 \forall c_i, c_j \in C: \left(dia(c_i) = dia(c_j) \land hora(c_i) = hora(c_j) \land i \neq j\right) \Rightarrow A(c_i) \neq A(c_j)
 $$
 
+**Donde:**
+- $\forall$ = "para todo" (cuantificador universal)
+- $\land$ = "y" lógico (AND)
+- $\Rightarrow$ = "implica que" (implicación lógica)
+- $\neq$ = "diferente de" (no igual)
+
 **R2. Capacidad Suficiente:**
 $$
 \forall c_i \in C: estudiantes(c_i) \leq capacidad(A(c_i))
 $$
+
+**Donde:**
+- $\leq$ = "menor o igual que"
+- $estudiantes(c_i)$ = número de estudiantes en la clase $c_i$
+- $capacidad(A(c_i))$ = capacidad del salón asignado a $c_i$
 
 ---
 
@@ -322,18 +356,32 @@ $$
 $$
 \forall c_i \in C: tipo(c_i) = tipo(A(c_i))
 $$
+
+**Donde:**
+- $tipo(c_i)$ = tipo de la clase (Teoría o Laboratorio)
+- $tipo(A(c_i))$ = tipo del salón asignado
+- Debe haber coincidencia exacta
+
 *Ejemplo: Una clase de laboratorio debe estar en un laboratorio*
 
 **R4. Salones Válidos:**
 $$
 \forall c_i \in C: A(c_i) \notin S_{invalidos}
 $$
-Donde $S_{invalidos} = \{AV1, AV2, AV4, AV5, E11\}$
+
+**Donde:**
+- $\notin$ = "no pertenece a"
+- $S_{invalidos} = \{AV1, AV2, AV4, AV5, E11\}$ = salones no utilizables
 
 **R5. Preferencias Prioritarias (PRIORIDAD 1):**
 $$
 \forall c_i \in P_1: A(c_i) = pref(c_i)
 $$
+
+**Donde:**
+- $P_1$ = conjunto de clases con PRIORIDAD 1
+- $pref(c_i)$ = salón preferido para la clase $c_i$
+- Esta restricción es OBLIGATORIA (100% cumplimiento)
 
 ---
 
@@ -356,12 +404,25 @@ Estas restricciones son **deseables** pero no obligatorias.
 $$
 minimize \quad \left| \{A(c) : c \in C_g\} \right|
 $$
+
+**Donde:**
+- $|\cdot|$ = cardinalidad (tamaño del conjunto)
+- $\{A(c) : c \in C_g\}$ = conjunto de salones usados por el grupo $g$
+- $C_g$ = clases del grupo $g$
+- Objetivo: minimizar salones diferentes por grupo
+
 *Minimizar el número de salones diferentes usados por cada grupo*
 
 **S2. Primer Semestre (PRIORIDAD 3):**
 $$
 maximize \sum_{g \in G_{15}} \sum_{c \in C_g} \mathbb{1}[A(c) = salon\_asignado(g)]
 $$
+
+**Donde:**
+- $\sum$ = sumatoria (suma de todos los elementos)
+- $G_{15}$ = grupos de primer semestre (15xx)
+- $\mathbb{1}[\cdot]$ = función indicadora (1 si verdadero, 0 si falso)
+- $salon\_asignado(g)$ = salón designado para el grupo $g$
 
 ---
 
@@ -374,6 +435,11 @@ Para cada profesor $p \in P$:
 $$
 minimize \sum_{p \in P} \left| \{A(c) : c \in C_p\} \right|
 $$
+
+**Donde:**
+- $C_p$ = conjunto de clases del profesor $p$
+- $\{A(c) : c \in C_p\}$ = salones diferentes usados por el profesor $p$
+- Objetivo: reducir salones diferentes por profesor
 
 **Objetivo:** Reducir la cantidad de salones diferentes que usa cada profesor durante el día/semana
 
@@ -390,6 +456,12 @@ f(A) = &\ w_1 \cdot movimientos(A) + w_2 \cdot cambios\_piso(A) \\
 \end{align}
 $$
 
+**Donde:**
+- $f(A)$ = energía o costo total de la asignación $A$
+- $w_i$ = peso del componente $i$ (importancia relativa)
+- $\cdot$ = multiplicación
+- Cada componente mide un aspecto diferente de la calidad
+
 **Objetivo:** $minimize\ f(A)$ sujeto a restricciones R1-R5
 
 ---
@@ -399,6 +471,12 @@ $$
 $$
 movimientos(A) = \sum_{p \in P} \max\left(0, \left| \{A(c) : c \in C_p\} \right| - 1\right)
 $$
+
+**Donde:**
+- $\max(a, b)$ = máximo entre $a$ y $b$
+- $|\{A(c) : c \in C_p\}|$ = número de salones diferentes del profesor $p$
+- Si usa $k$ salones, hace $k-1$ movimientos
+- $\max(0, \cdot)$ asegura que el valor no sea negativo
 
 **Ejemplo Numérico:**
 - Profesor tiene clases en: FF1, FF2, FF1, FF3, FF2
@@ -414,6 +492,12 @@ Sea $C_p^{ordenado} = [c_1, c_2, ..., c_k]$ las clases del profesor $p$ ordenada
 $$
 cambios\_piso(A) = \sum_{p \in P} \sum_{i=1}^{|C_p|-1} \mathbb{1}[piso(A(c_i)) \neq piso(A(c_{i+1}))]
 $$
+
+**Donde:**
+- $C_p^{ordenado}$ = clases del profesor ordenadas cronológicamente
+- $\sum_{i=1}^{|C_p|-1}$ = suma desde la primera hasta la penúltima clase
+- $c_i, c_{i+1}$ = clases consecutivas en el tiempo
+- $piso(A(c_i))$ = piso del salón asignado a la clase $c_i$
 
 Donde $\mathbb{1}[\cdot]$ es la función indicadora:
 
@@ -438,11 +522,21 @@ d(s_i, s_j) = \begin{cases}
 \end{cases}
 $$
 
+**Donde:**
+- $d(s_i, s_j)$ = distancia entre salón $s_i$ y salón $s_j$
+- Mismo salón: distancia 0
+- Mismo piso, diferente salón: distancia 1
+- Diferente piso: distancia 10 (penalización por subir/bajar escaleras)
+
 Distancia total:
 
 $$
 distancia(A) = \sum_{p \in P} \sum_{i=1}^{|C_p|-1} d(A(c_i), A(c_{i+1}))
 $$
+
+**Donde:**
+- Se suma la distancia entre salones de clases consecutivas
+- Para cada profesor, se acumula la distancia total recorrida
 
 ---
 
@@ -458,20 +552,43 @@ penalizacion\_P3(A) &= 25 \times \sum_{c \in P_3} \mathbb{1}[A(c) \neq pref(c)]
 \end{align}
 $$
 
+**Donde:**
+- $\times$ = multiplicación
+- $1000, 500, 300$ = pesos altos para restricciones casi-duras
+- $50, 25$ = pesos menores para preferencias soft
+- $conflicto\_temporal(c_i, c_j, A)$ = verdadero si $c_i$ y $c_j$ están en el mismo salón al mismo tiempo
+- $P_2, P_3$ = conjuntos de clases con prioridad 2 y 3 respectivamente
+
 ---
 
 ## Pesos de la Función Objetivo
 
-| Componente | Peso | Justificación |
-|------------|------|---------------|
-| Movimientos | 10 | Impacto directo en fatiga del profesor |
-| Cambios piso | 5 | Menor impacto que movimientos totales |
-| Distancia | 3 | Correlacionado con movimientos |
-| Inválidos | 1000 | Restricción casi-dura |
-| Conflictos | 500 | Restricción casi-dura |
-| Tipo incorrecto | 300 | Restricción casi-dura |
-| P2 | 50 | Soft constraint importante |
-| P3 | 25 | Soft constraint menos crítico |
+| Componente | Peso | Tipo | Justificación |
+|------------|------|------|---------------|
+| Movimientos | 10 | Soft | Impacto directo en fatiga del profesor |
+| Cambios piso | 5 | Soft | Menor impacto que movimientos totales |
+| Distancia | 3 | Soft | Correlacionado con movimientos |
+| Inválidos | 1000 | Casi-dura | Salones no deben usarse |
+| Conflictos | 500 | Casi-dura | Violación grave de restricción |
+| Tipo incorrecto | 300 | Casi-dura | Incompatibilidad física |
+| P2 | 50 | Soft | Importante pero no crítico |
+| P3 | 25 | Soft | Deseable pero menos crítico |
+
+---
+
+## Jerarquía de Pesos
+
+**Relación de dominancia:**
+$$
+w_4 > w_5 > w_6 \gg w_7 > w_8 \gg w_1 > w_2 > w_3
+$$
+
+**Interpretación:**
+- **Restricciones casi-duras** (1000, 500, 300): Dominan sobre todo
+- **Soft importantes** (50, 25): Prioridad media
+- **Optimización** (10, 5, 3): Mejora de calidad
+
+**Garantía:** Una violación de restricción casi-dura siempre pesa más que cualquier combinación razonable de violaciones soft.
 
 ---
 
@@ -1193,6 +1310,53 @@ Preferencias:
 # Teoría y Fundamentos Matemáticos
 
 **Modelado Formal del Problema**
+
+---
+
+## Glosario de Notación Matemática
+
+### Conjuntos Básicos
+
+| Símbolo | Significado | Cardinalidad | Descripción |
+|---------|-------------|--------------|-------------|
+| $C$ | Conjunto de clases | $n = 680$ | Todas las sesiones a asignar |
+| $S$ | Conjunto de salones | $m = 21$ | Salones disponibles |
+| $P$ | Conjunto de profesores | $k \approx 30$ | Profesores que imparten |
+| $M$ | Conjunto de materias | $\|M\| = 37$ | Materias del plan |
+| $G$ | Conjunto de grupos | $\|G\| \approx 50$ | Grupos de estudiantes |
+| $D$ | Días de la semana | $\|D\| = 5$ | Lunes a Viernes |
+| $H$ | Bloques horarios | $\|H\| = 14$ | 07:00 a 21:00 |
+
+---
+
+## Glosario (continuación)
+
+### Variables y Atributos Principales
+
+| Notación | Tipo | Descripción |
+|----------|------|-------------|
+| $A: C \rightarrow S$ | Función | Asignación de clase a salón |
+| $dia(c_i)$ | $D$ | Día de la clase $c_i$ |
+| $hora(c_i)$ | $H$ | Hora de la clase $c_i$ |
+| $profesor(c_i)$ | $P$ | Profesor de la clase $c_i$ |
+| $tipo(c_i)$ | $\{\text{T, L}\}$ | Teoría o Laboratorio |
+| $estudiantes(c_i)$ | $\mathbb{N}$ | Número de estudiantes |
+| $prioridad(c_i)$ | $\{1,2,3\}$ | Nivel de prioridad |
+| $pref(c_i)$ | $S \cup \{\emptyset\}$ | Salón preferido |
+
+---
+
+## Glosario (continuación 2)
+
+### Conjuntos Derivados
+
+| Conjunto | Notación | Descripción |
+|----------|----------|-------------|
+| Clases del profesor $p$ | $C_p = \{c \in C : profesor(c) = p\}$ | Todas las clases de un profesor |
+| Clases del grupo $g$ | $C_g = \{c \in C : grupo(c) = g\}$ | Todas las clases de un grupo |
+| Clases de prioridad $k$ | $P_k = \{c \in C : prioridad(c) = k\}$ | Clases con prioridad $k$ |
+| Salones inválidos | $S_{inv}$ | Salones no utilizables |
+| Salones válidos | $S_{val} = S \setminus S_{inv}$ | Salones utilizables |
 
 ---
 
