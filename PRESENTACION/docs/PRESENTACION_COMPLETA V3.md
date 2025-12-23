@@ -254,6 +254,7 @@ D &= \{\text{Lunes, Martes, ..., Viernes}\} &&\text{Dias de la semana} \\
 H &= \{0700, 0800, ..., 2100\} &&\text{Bloques horarios}
 \end{align}
 $$
+---
 
 **Donde:**
 - $n = 680$ (número total de clases)
@@ -280,6 +281,8 @@ estudiantes(c_i) &\in \mathbb{N} &&\text{Numero de estudiantes}
 \end{align}
 $$
 
+---
+
 **Donde:**
 - $c_i$ = clase individual (ejemplo: $c_1, c_2, ..., c_{680}$)
 - $dia(c_i)$ = función que retorna el día de la clase $c_i$
@@ -301,6 +304,8 @@ piso(s_j) &\in \{0, 1\} &&\text{Planta baja o alta} \\
 ubicacion(s_j) &\in \mathbb{R}^2 &&\text{Coordenadas fisicas}
 \end{align}
 $$
+
+---
 
 **Donde:**
 - $s_j$ = salón individual (ejemplo: FF1, FF2, LAB1, ...)
@@ -338,6 +343,8 @@ $$
 - $\Rightarrow$ = "implica que" (implicación lógica)
 - $\neq$ = "diferente de" (no igual)
 
+---
+
 **R2. Capacidad Suficiente:**
 $$
 \forall c_i \in C: estudiantes(c_i) \leq capacidad(A(c_i))
@@ -364,6 +371,8 @@ $$
 
 *Ejemplo: Una clase de laboratorio debe estar en un laboratorio*
 
+---
+
 **R4. Salones Válidos:**
 $$
 \forall c_i \in C: A(c_i) \notin S_{invalidos}
@@ -372,6 +381,8 @@ $$
 **Donde:**
 - $\notin$ = "no pertenece a"
 - $S_{invalidos} = \{AV1, AV2, AV4, AV5, E11\}$ = salones no utilizables
+
+---
 
 **R5. Preferencias Prioritarias (PRIORIDAD 1):**
 $$
@@ -412,6 +423,8 @@ $$
 - Objetivo: minimizar salones diferentes por grupo
 
 *Minimizar el número de salones diferentes usados por cada grupo*
+
+---
 
 **S2. Primer Semestre (PRIORIDAD 3):**
 $$
@@ -478,6 +491,8 @@ $$
 - Si usa $k$ salones, hace $k-1$ movimientos
 - $\max(0, \cdot)$ asegura que el valor no sea negativo
 
+---
+
 **Ejemplo Numérico:**
 - Profesor tiene clases en: FF1, FF2, FF1, FF3, FF2
 - Salones únicos: {FF1, FF2, FF3}
@@ -492,6 +507,8 @@ Sea $C_p^{ordenado} = [c_1, c_2, ..., c_k]$ las clases del profesor $p$ ordenada
 $$
 cambios\_piso(A) = \sum_{p \in P} \sum_{i=1}^{|C_p|-1} \mathbb{1}[piso(A(c_i)) \neq piso(A(c_{i+1}))]
 $$
+
+---
 
 **Donde:**
 - $C_p^{ordenado}$ = clases del profesor ordenadas cronológicamente
@@ -522,13 +539,17 @@ d(s_i, s_j) = \begin{cases}
 \end{cases}
 $$
 
+---
+
 **Donde:**
 - $d(s_i, s_j)$ = distancia entre salón $s_i$ y salón $s_j$
 - Mismo salón: distancia 0
 - Mismo piso, diferente salón: distancia 1
 - Diferente piso: distancia 10 (penalización por subir/bajar escaleras)
 
-Distancia total:
+---
+
+**Distancia total:**
 
 $$
 distancia(A) = \sum_{p \in P} \sum_{i=1}^{|C_p|-1} d(A(c_i), A(c_{i+1}))
@@ -551,6 +572,7 @@ penalizacion\_P2(A) &= 50 \times \sum_{c \in P_2} \mathbb{1}[A(c) \neq pref(c)] 
 penalizacion\_P3(A) &= 25 \times \sum_{c \in P_3} \mathbb{1}[A(c) \neq pref(c)]
 \end{align}
 $$
+---
 
 **Donde:**
 - $\times$ = multiplicación
@@ -1313,7 +1335,7 @@ Preferencias:
 
 ---
 
-## Glosario de Notación Matemática
+## Glosario (1/4)
 
 ### Conjuntos Básicos
 
@@ -1329,9 +1351,9 @@ Preferencias:
 
 ---
 
-## Glosario (continuación)
+## Glosario (2/4)
 
-### Variables y Atributos Principales
+### Variables y Atributos Principales (I)
 
 | Notación | Tipo | Descripción |
 |----------|------|-------------|
@@ -1339,6 +1361,15 @@ Preferencias:
 | $dia(c_i)$ | $D$ | Día de la clase $c_i$ |
 | $hora(c_i)$ | $H$ | Hora de la clase $c_i$ |
 | $profesor(c_i)$ | $P$ | Profesor de la clase $c_i$ |
+
+---
+
+## Glosario (3/4)
+
+### Variables y Atributos Principales (II)
+
+| Notación | Tipo | Descripción |
+|----------|------|-------------|
 | $tipo(c_i)$ | $\{\text{T, L}\}$ | Teoría o Laboratorio |
 | $estudiantes(c_i)$ | $\mathbb{N}$ | Número de estudiantes |
 | $prioridad(c_i)$ | $\{1,2,3\}$ | Nivel de prioridad |
@@ -1346,7 +1377,7 @@ Preferencias:
 
 ---
 
-## Glosario (continuación 2)
+## Glosario (4/4)
 
 ### Conjuntos Derivados
 
@@ -8369,8 +8400,6 @@ python3 corregir_prioridades.py datos_estructurados/04_Horario_Optimizado_Greedy
 **Conclusión Final:**
 
 **Greedy+HC es estadísticamente superior** (p<0.001, d=22.4)
-
----
 
 ---
 
