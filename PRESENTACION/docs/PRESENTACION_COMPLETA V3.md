@@ -1375,8 +1375,20 @@ El problema de asignación de salones es un **problema de optimización combinat
 - Conjunto de restricciones $R$
 - Función de costo $f: C \times S \rightarrow \mathbb{R}$
 
+**Donde:**
+- $C, S$ = conjuntos de clases y salones
+- $R$ = conjunto de restricciones (duras y suaves)
+- $f: C \times S \rightarrow \mathbb{R}$ = función que asigna un costo real a cada par (clase, salón)
+- $\times$ = producto cartesiano
+- $\mathbb{R}$ = números reales
+
 **Salida:**
 - Asignación $A: C \rightarrow S$ que minimiza $f$ sujeto a $R$
+
+**Donde:**
+- $A$ = función de asignación que mapea cada clase a un salón
+- "minimiza $f$" = encuentra la asignación con menor costo
+- "sujeto a $R$" = respetando todas las restricciones
 
 
 ---
@@ -1390,6 +1402,13 @@ Este problema pertenece a la familia de **problemas NP-difíciles**, específica
 - **Espacio de búsqueda:** $O(m^n)$ donde $m$ = salones, $n$ = clases
 - **Ejemplo:** Para 680 clases y 21 salones: $21^{680} \approx 10^{900}$ combinaciones
 
+**Donde:**
+- $O(m^n)$ = notación Big-O (orden de magnitud)
+- $m^n$ = $m$ elevado a la potencia $n$
+- $21^{680}$ = 21 opciones para cada una de las 680 clases
+- $\approx$ = "aproximadamente"
+- $10^{900}$ = 1 seguido de 900 ceros (número astronómicamente grande)
+
 
 ---
 
@@ -1400,14 +1419,22 @@ Este problema pertenece a la familia de **problemas NP-difíciles**, específica
 1. **Unicidad temporal:** Una clase solo puede estar en un salón a la vez
    $$\forall c_i, c_j \in C: (dia_i = dia_j \land hora_i = hora_j) \Rightarrow A(c_i) \neq A(c_j)$$
 
+   **Donde:** $\forall$ = para todo, $\land$ = y lógico, $\Rightarrow$ = implica, $\neq$ = diferente
+
 2. **Capacidad:** El salón debe tener capacidad suficiente
    $$\forall c \in C: capacidad(A(c)) \geq estudiantes(c)$$
+
+   **Donde:** $\geq$ = mayor o igual que
 
 3. **Tipo de salón:** Debe coincidir con el tipo de clase
    $$\forall c \in C: tipo(A(c)) = tipo\_requerido(c)$$
 
+   **Donde:** $tipo(A(c))$ = tipo del salón asignado, $tipo\_requerido(c)$ = tipo que necesita la clase
+
 4. **Preferencias prioritarias (P1):** Cumplimiento obligatorio al 100%
    $$\forall c \in P1: A(c) = salon\_preferido(c)$$
+
+   **Donde:** $P1$ = conjunto de clases con prioridad 1, $salon\_preferido(c)$ = salón preferido
 ---
 
 #### Restricciones Suaves (Soft Constraints)
@@ -1415,8 +1442,12 @@ Este problema pertenece a la familia de **problemas NP-difíciles**, específica
 1. **Consistencia de grupo (P2):** Minimizar cambios de salón por grupo
    $$minimize \sum_{g \in Grupos} |salones\_distintos(g)|$$
 
+   **Donde:** $\sum$ = sumatoria, $|\cdot|$ = cardinalidad (tamaño del conjunto), $salones\_distintos(g)$ = salones diferentes usados por el grupo $g$
+
 2. **Primer semestre (P3):** Asignar grupos 15xx a salones específicos
    $$maximize \sum_{c \in Grupos15xx} \mathbb{1}[A(c) = salon\_asignado]$$
+
+   **Donde:** $maximize$ = maximizar, $\mathbb{1}[\cdot]$ = función indicadora (1 si verdadero, 0 si falso), $Grupos15xx$ = grupos de primer semestre
 
 
 ---
@@ -1434,10 +1465,16 @@ $$
 E(A) = w_1 \cdot movimientos(A) + w_2 \cdot cambios\_piso(A) + w_3 \cdot distancia(A) + \sum_{i} w_i \cdot penalizacion_i(A)
 $$
 
-Donde:
-- $E(A)$: Energía/costo total de la asignación $A$
-- $w_i$: Pesos de cada componente
-- Objetivo: $minimize\ E(A)$
+**Donde:**
+- $E(A)$ = energía/costo total de la asignación $A$
+- $w_i$ = pesos de cada componente (importancia relativa)
+- $\cdot$ = multiplicación
+- $movimientos(A)$ = número de movimientos entre salones
+- $cambios\_piso(A)$ = número de cambios de piso
+- $distancia(A)$ = distancia total recorrida
+- $\sum_{i} w_i \cdot penalizacion_i(A)$ = suma de todas las penalizaciones
+- **Objetivo:** $minimize\ E(A)$ = encontrar la asignación con menor costo
+
 ---
 ### 2.2 Componentes de la Función
 
