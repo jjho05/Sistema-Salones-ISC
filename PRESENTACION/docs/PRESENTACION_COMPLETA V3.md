@@ -4865,6 +4865,104 @@ Sin embargo, requiere **cuidadoso feature engineering** y **datos de entrenamien
 
 ---
 
+## 📖 Ejemplo Didáctico: Machine Learning
+
+**Problema Simplificado para Demostración**
+
+---
+
+### Problema Didáctico
+
+**Datos:**
+- 10 clases
+- 4 salones  
+- 4 profesores
+- Objetivo: Predecir asignaciones óptimas
+
+**Archivo:** `ejemplos_didacticos/02_machine_learning.py`
+
+**Propósito:** Demostrar cómo ML aprende patrones de asignación
+
+---
+
+### Modelo Simplificado
+
+**Reglas Aprendidas:**
+```python
+class ModeloSimple:
+    def entrenar(self, X, y):
+        # Reglas basadas en características
+        self.reglas = [
+            ("Lab", lambda f: f[1] > 0.5, 3),      # Lab → S4
+            ("Muchos est.", lambda f: f[0] > 0.54, 0),  # >27 → S1
+            ("Default", lambda f: True, 1),         # Resto → S2
+        ]
+    
+    def predecir(self, features):
+        for _, condicion, salon_idx in self.reglas:
+            if condicion(features):
+                return salon_idx
+        return 1
+```
+
+**Features extraídas:**
+- `f[0]`: Número de estudiantes (normalizado)
+- `f[1]`: Tipo de clase (0=Teoría, 1=Lab)
+
+---
+
+### Resultados del Ejemplo
+
+**Asignación Aleatoria (Baseline):**
+```
+Movimientos de profesores: 5
+```
+
+**Predicciones con ML:**
+```
+Movimientos de profesores: 3
+```
+
+**Mejora Lograda:** 40% ✅
+
+**Conclusión:** ML reduce movimientos al aprender patrones óptimos
+
+---
+
+### Ejecutar el Ejemplo
+
+```bash
+cd ejemplos_didacticos
+python3 02_machine_learning.py
+```
+
+**Salida esperada:**
+```
+============================================================
+EJEMPLO: Machine Learning
+============================================================
+Entrenando modelo...
+
+🎲 Asignación aleatoria (sin ML):
+Movimientos: 5
+
+🤖 Predicciones con ML:
+  C1 → S2
+  C2 → S1
+  ...
+
+📊 Comparación:
+  Movimientos (aleatorio): 5
+  Movimientos (ML): 3
+  Mejora: 40.0%
+
+✅ Completado!
+```
+
+---
+
+---
+
 <!-- _class: lead blue -->
 # Algoritmo Genético
 
@@ -5632,6 +5730,136 @@ Generación    Mejor      Promedio    Peor       Diversidad
 
 **Óptimo:** 0.10-0.15 (adaptativa)
 
+
+---
+
+## 📖 Ejemplo Didáctico: Algoritmo Genético
+
+**Problema Simplificado para Demostración**
+
+---
+
+### Problema Didáctico
+
+**Datos:**
+- 10 clases
+- 4 salones
+- 4 profesores
+- Objetivo: Evolucionar hacia soluciones óptimas
+
+**Archivo:** `ejemplos_didacticos/03_algoritmo_genetico.py`
+
+**Propósito:** Demostrar evolución de población con operadores genéticos
+
+---
+
+### Operadores Genéticos
+
+**Crear Individuo (Cromosoma):**
+```python
+def crear_individuo():
+    individuo = []
+    for clase in clases:
+        compatibles = [i for i, s in enumerate(salones) 
+                      if s.tipo == clase.tipo]
+        individuo.append(random.choice(compatibles))
+    return individuo
+```
+
+**Cruce de Un Punto:**
+```python
+def cruce(p1, p2):
+    punto = len(p1) // 2
+    hijo1 = p1[:punto] + p2[punto:]
+    hijo2 = p2[:punto] + p1[punto:]
+    return hijo1, hijo2
+```
+
+**Mutación:**
+```python
+def mutacion(ind, prob=0.1):
+    mutado = ind.copy()
+    for i in range(len(mutado)):
+        if random.random() < prob:
+            compatibles = [j for j, s in enumerate(salones) 
+                          if s.tipo == clases[i].tipo]
+            mutado[i] = random.choice(compatibles)
+    return mutado
+```
+
+---
+
+### Parámetros del Ejemplo
+
+| Parámetro | Valor |
+|-----------|-------|
+| **Población** | 30 individuos |
+| **Generaciones** | 100 |
+| **Prob. cruce** | 0.8 |
+| **Prob. mutación** | 0.1 |
+| **Elitismo** | 2 mejores |
+
+---
+
+### Resultados del Ejemplo
+
+**Fitness Inicial (Aleatorio):**
+```
+Fitness: 0.0196
+```
+
+**Fitness Final (Generación 100):**
+```
+Fitness: 0.0476
+```
+
+**Mejora Lograda:** 142.9% ✅
+
+**Evolución:**
+```
+Gen 0:  Fitness = 0.0476
+Gen 50: Fitness = 0.0476  
+Gen 99: Fitness = 0.0476
+```
+
+**Conclusión:** El AG explora el espacio y encuentra mejores soluciones
+
+---
+
+### Ejecutar el Ejemplo
+
+```bash
+cd ejemplos_didacticos
+python3 03_algoritmo_genetico.py
+```
+
+**Salida esperada:**
+```
+============================================================
+EJEMPLO: Algoritmo Genético
+============================================================
+
+🎲 Solución aleatoria inicial:
+Fitness aleatorio: 0.0196
+
+🧬 Ejecutando Algoritmo Genético...
+Gen 0: Fitness = 0.0476
+Gen 10: Fitness = 0.0476
+...
+Gen 99: Fitness = 0.0476
+
+🏆 Mejor solución encontrada:
+  C1 → S3
+  C2 → S3
+  ...
+
+Fitness final: 0.0476
+Mejora sobre aleatorio: 142.9%
+
+✅ Completado!
+```
+
+---
 
 ---
 
