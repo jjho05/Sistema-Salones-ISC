@@ -1484,6 +1484,13 @@ $$
 movimientos(A) = \sum_{p \in Profesores} \left| \{A(c) : c \in clases(p)\} \right| - 1
 $$
 
+**Donde:**
+- $\sum_{p \in Profesores}$ = suma sobre todos los profesores
+- $|\cdot|$ = cardinalidad (número de elementos del conjunto)
+- $\{A(c) : c \in clases(p)\}$ = conjunto de salones usados por el profesor $p$
+- $clases(p)$ = clases que imparte el profesor $p$
+- $-1$ = si usa $k$ salones, hace $k-1$ movimientos
+
 **Interpretación:** Número de veces que cada profesor cambia de salón
 
 ---
@@ -1494,6 +1501,13 @@ $$
 cambios\_piso(A) = \sum_{p \in Profesores} \sum_{i=1}^{|clases(p)|-1} \mathbb{1}[piso(A(c_i)) \neq piso(A(c_{i+1}))]
 $$
 
+**Donde:**
+- $\sum_{i=1}^{|clases(p)|-1}$ = suma desde la primera hasta la penúltima clase del profesor
+- $\mathbb{1}[\cdot]$ = función indicadora (1 si verdadero, 0 si falso)
+- $c_i, c_{i+1}$ = clases consecutivas (en orden cronológico)
+- $piso(A(c_i))$ = piso del salón asignado a la clase $c_i$
+- $\neq$ = diferente de
+
 **Interpretación:** Número de veces que cada profesor sube o baja de piso
 
 ---
@@ -1502,6 +1516,10 @@ $$
 $$
 distancia(A) = \sum_{p \in Profesores} \sum_{i=1}^{|clases(p)|-1} d(A(c_i), A(c_{i+1}))
 $$
+
+**Donde:**
+- $d(s_1, s_2)$ = función de distancia entre salón $s_1$ y salón $s_2$
+- Se acumula la distancia entre salones de clases consecutivas
 
 Donde $d(s_1, s_2)$ es la distancia entre salones:
 
@@ -1512,6 +1530,13 @@ d(s_1, s_2) = \begin{cases}
 10 & \text{si diferente piso}
 \end{cases}
 $$
+
+**Donde:**
+- $\begin{cases}\cdot\end{cases}$ = definición por casos
+- Mismo salón: distancia 0 (sin movimiento)
+- Mismo piso: distancia 1 (movimiento horizontal)
+- Diferente piso: distancia 10 (movimiento vertical, más costoso)
+
 ---
 ### 2.3 Penalizaciones
 
@@ -1521,12 +1546,24 @@ $$
 penalizacion\_invalidos(A) = 1000 \times \sum_{c \in C} \mathbb{1}[A(c) \in S_{invalidos}]
 $$
 
+**Donde:**
+- $1000$ = peso alto (penalización severa)
+- $\times$ = multiplicación
+- $S_{invalidos}$ = conjunto de salones no utilizables
+- $\mathbb{1}[A(c) \in S_{invalidos}]$ = 1 si la clase $c$ está en salón inválido, 0 si no
+
 ---
 #### Conflictos de Horario
 
 $$
 penalizacion\_conflictos(A) = 500 \times |\{(c_i, c_j) : conflicto(c_i, c_j, A)\}|
 $$
+
+**Donde:**
+- $500$ = peso alto (penalización severa)
+- $|\cdot|$ = cardinalidad (número de elementos)
+- $(c_i, c_j)$ = par de clases en conflicto
+- $conflicto(c_i, c_j, A)$ = verdadero si las clases están en el mismo salón al mismo tiempo
 
 ---
 #### Tipo Incorrecto
@@ -1535,12 +1572,24 @@ $$
 penalizacion\_tipo(A) = 300 \times \sum_{c \in C} \mathbb{1}[tipo(A(c)) \neq tipo\_requerido(c)]
 $$
 
+**Donde:**
+- $300$ = peso alto (penalización severa)
+- $tipo(A(c))$ = tipo del salón asignado (Teoría o Laboratorio)
+- $tipo\_requerido(c)$ = tipo que necesita la clase
+- $\neq$ = diferente de
+
 ---
 #### Preferencias (P2 y P3)
 
 $$
 penalizacion\_preferencias(A) = \sum_{c \in P2 \cup P3} w_{prioridad(c)} \times \mathbb{1}[A(c) \neq salon\_preferido(c)]
 $$
+
+**Donde:**
+- $P2 \cup P3$ = unión de clases con prioridad 2 y prioridad 3
+- $\cup$ = unión de conjuntos
+- $w_{prioridad(c)}$ = peso según prioridad (50 para P2, 25 para P3)
+- $salon\_preferido(c)$ = salón preferido para la clase $c$
 
 
 ---
@@ -1636,15 +1685,30 @@ Donde:
 $$
 \forall vecino \in N(A_{actual}): E(vecino) \geq E(A_{actual})
 $$
+
+**Donde:**
+- $\forall$ = para todo
+- $N(A_{actual})$ = vecindario de la asignación actual
+- $E(\cdot)$ = función de energía/costo
+- $\geq$ = mayor o igual que
+- **Interpretación:** Se detiene cuando ningún vecino mejora la solución
+
 ---
 ### 5.2 Algoritmo Genético
 
 **Teorema de Convergencia:** Con probabilidad 1, el algoritmo genético con elitismo converge al óptimo global cuando $t \rightarrow \infty$
 
+**Donde:**
+- $t \rightarrow \infty$ = cuando el tiempo tiende a infinito
+- $\rightarrow$ = "tiende a"
+- $\infty$ = infinito
+
 **Condiciones:**
 - Mutación con probabilidad $p_m > 0$
 - Elitismo (preservar mejores individuos)
 - Población suficientemente grande
+
+**Donde:** $p_m$ = probabilidad de mutación, $> 0$ = estrictamente mayor que cero
 
 ---
 
@@ -1657,7 +1721,12 @@ $$
 E_{error} = \mathbb{E}[(y - \hat{y})^2]
 $$
 
-Donde $y$ es la asignación óptima y $\hat{y}$ es la predicción
+**Donde:**
+- $\mathbb{E}[\cdot]$ = valor esperado (promedio)
+- $y$ = asignación óptima (valor real)
+- $\hat{y}$ = predicción del modelo (valor estimado)
+- $(y - \hat{y})^2$ = error cuadrático
+- $\hat{\cdot}$ = símbolo de estimación/predicción
 
 
 ---
@@ -1675,6 +1744,14 @@ $$
 score(c, s) = \alpha \cdot distancia(s, ultimo\_salon(profesor(c))) + \beta \cdot ocupacion(s) + \gamma \cdot penalizacion(s, c)
 $$
 
+**Donde:**
+- $score(c, s)$ = puntuación para asignar clase $c$ al salón $s$
+- $\alpha, \beta, \gamma$ = pesos de cada componente
+- $\cdot$ = multiplicación
+- $distancia(s, ultimo\_salon(\cdot))$ = distancia al último salón usado por el profesor
+- $ocupacion(s)$ = nivel de ocupación del salón $s$
+- $penalizacion(s, c)$ = penalización por asignar $c$ a $s$
+
 
 ---
 
@@ -1687,6 +1764,13 @@ padre_1[i] & \text{si } i < punto\_cruce \\
 padre_2[i] & \text{si } i \geq punto\_cruce
 \end{cases}
 $$
+
+**Donde:**
+- $hijo_1[i]$ = gen $i$ del hijo 1
+- $padre_1[i], padre_2[i]$ = gen $i$ de cada padre
+- $i$ = índice del gen (clase)
+- $punto\_cruce$ = punto donde se divide el cromosoma
+- $<$ = menor que, $\geq$ = mayor o igual que
 
 **Mutación:** Intercambio aleatorio
 $$
