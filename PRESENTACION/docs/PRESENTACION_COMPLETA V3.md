@@ -1744,6 +1744,8 @@ $$
 - $\rightarrow$ = "tiende a"
 - $\infty$ = infinito
 
+---
+
 **Condiciones:**
 - Mutación con probabilidad $p_m > 0$
 - Elitismo (preservar mejores individuos)
@@ -1813,6 +1815,8 @@ $$
 - $punto\_cruce$ = punto donde se divide el cromosoma
 - $<$ = menor que, $\geq$ = mayor o igual que
 
+---
+
 **Mutación:** Intercambio aleatorio
 $$
 P(mutar(c)) = p_m \cdot (1 + \frac{generacion}{max\_generaciones})
@@ -1833,6 +1837,8 @@ $$
 - $A'$ = asignación vecina (modificación de $A$)
 - $tipo(c_i) = tipo(c_j)$ = ambas clases del mismo tipo (ambas Teoría o ambas Lab)
 - $A'(c_i) = A(c_j)$ = intercambio de salones entre $c_i$ y $c_j$
+
+---
 
 **Criterio de aceptación:** Descenso más pronunciado (steepest descent)
 
@@ -2304,6 +2310,8 @@ Donde:
 - $s_t$ = solución en tiempo $t$
 - $pref(c_i)$ = salón preferido de clase $c_i$
 
+---
+
 **Verificación:**
 
 ```python
@@ -2550,542 +2558,13 @@ Es un componente **crítico** que hace posible el enfoque de prioridades jerárq
 
 
 
----
 
 
-**Guías Completas de Instalación y Uso**
-
----
-
-## 📚 Documentación Disponible
-
-El proyecto incluye **documentación completa** para facilitar su uso y comprensión:
-
-### Documentos Principales
-
-| Documento | Descripción | Ubicación |
-|-----------|-------------|-----------|
-| **README.md** | Guía principal del proyecto | Raíz |
-| **INSTALACION.md** | Guía de instalación detallada | Raíz |
-| **Estado del Arte** | Revisión de literatura | `literatura/` |
-| **Teoría Matemática** | Fundamentos formales | `literatura/` |
-| **Ejemplos Didácticos** | Código educativo | `ejemplos_didacticos/` |
-
----
-
-## 📖 README.md - Guía Principal
-
-**Contenido del README:**
-
-- 🎯 Descripción general del problema
-- ✨ Características principales
-- 📚 Estado del Arte (15 artículos)
-- 🔢 Fundamentos matemáticos
-- 🤖 4 algoritmos explicados
-- 📖 Ejemplos didácticos
-- 🏗️ Arquitectura del sistema
-- 💻 Guía de instalación
-- 🚀 Instrucciones de uso
-- 📊 Resultados y métricas
-
-**Características:**
-- ✅ 486 líneas de documentación
-- ✅ Badges profesionales
-- ✅ Diagramas Mermaid
-- ✅ Tablas comparativas
-
----
-
-## 💻 INSTALACION.md - Guía de Instalación
-
-**Cobertura:**
-
-### Sistemas Operativos
-- 🐧 **Linux/macOS:** Instrucciones paso a paso
-- 🪟 **Windows:** Guía específica con screenshots
-- 🐍 **Entornos virtuales:** Configuración recomendada
-
-### Contenido
-1. Requisitos previos
-2. Instalación por sistema operativo
-3. Configuración de entorno virtual
-4. Instalación de dependencias
-5. Verificación de instalación
-6. **Troubleshooting:** 9 problemas comunes resueltos
-
----
-
-## 🐛 Troubleshooting - Problemas Comunes
-
-La guía incluye soluciones para:
-
-1. ❌ "python: command not found"
-2. ❌ "pip: command not found"
-3. ❌ "Permission denied"
-4. ❌ "ModuleNotFoundError: tkinter"
-5. ❌ Errores de compilación en Windows
-6. ❌ "SSL Certificate Error"
-7. ❌ Problemas con entornos virtuales
-8. ❌ Conflictos de versiones
-9. ❌ Errores de importación
-
-**Cada problema incluye:**
-- Descripción del error
-- Causa probable
-- Solución paso a paso
-- Comandos específicos
-
----
-
-## 🔧 Script de Verificación
-
-**Incluido en INSTALACION.md:**
-
-```python
-# verificar_instalacion.py
-import sys
-
-def verificar_modulo(nombre):
-    try:
-        modulo = __import__(nombre)
-        version = getattr(modulo, '__version__', 'desconocida')
-        print(f"✅ {nombre:20} v{version}")
-        return True
-    except ImportError:
-        print(f"❌ {nombre:20} NO INSTALADO")
-        return False
-
-modulos = ['pandas', 'numpy', 'sklearn', 'matplotlib', 
-           'seaborn', 'openpyxl', 'flask']
-
-resultados = [verificar_modulo(m) for m in modulos]
-
-if all(resultados):
-    print("✅ TODAS LAS DEPENDENCIAS INSTALADAS")
-else:
-    print("❌ FALTAN DEPENDENCIAS")
-```
-
----
-
-## 📦 Dependencias del Proyecto
-
-**requirements.txt:**
-
-```
-pandas==2.1.4
-numpy==1.26.2
-scikit-learn==1.3.2
-matplotlib==3.8.2
-seaborn==0.13.0
-openpyxl==3.1.2
-Flask==3.0.0
-reportlab==4.0.7
-fuzzywuzzy==0.18.0
-python-Levenshtein==0.23.0
-```
-
-**Instalación:**
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## 🏗️ Estructura del Proyecto
-
-```
-Sistema-Salones-ISC/
-├── 📁 PRESENTACION/          # Esta presentación
-├── 📁 ejemplos_didacticos/   # Ejemplos Python
-├── 📁 literatura/            # Estado del arte
-├── 📁 datos_estructurados/   # Datos I/O
-├── 📁 comparativas/          # Resultados
-├── 📁 webapp/                # Interfaz web
-├── 📄 optimizador_*.py       # 3 algoritmos
-├── 📄 pre_asignar_p1.py     # Pre-asignación
-├── 📄 ejecutar_todos.py     # Script maestro
-├── 📄 requirements.txt      # Dependencias
-├── 📄 README.md             # Guía principal
-└── 📄 INSTALACION.md        # Guía instalación
-```
-
----
-
-## 🚀 Opciones de Ejecución
-
-### Opción 1: Ejecución Completa (Recomendado)
-
-```bash
-python3 ejecutar_todos.py
-```
-
-**Ejecuta automáticamente:**
-1. Pre-asignación P1
-2. Optimizador Greedy
-3. Optimizador ML
-4. Optimizador Genético
-5. Corrección de prioridades
-6. Generación de comparativas
-
----
-
-## 🚀 Opciones de Ejecución (continuación)
-
-### Opción 2: Ejecución Paso a Paso
-
-```bash
-# 1. Pre-asignar PRIORIDAD 1
-python3 pre_asignar_p1.py
-
-# 2. Ejecutar optimizador específico
-python3 optimizador_greedy.py
-
-# 3. Corregir (si necesario)
-python3 corregir_prioridades.py datos_estructurados/04_Horario_Optimizado_Greedy.csv
-
-# 4. Generar comparativas
-python3 generar_comparativa_completa.py
-```
-
-### Opción 3: Configuración Inicial
-
-```bash
-python3 configurador_materias.py
-```
-
----
-
-## 📊 Salidas Generadas
-
-El sistema genera automáticamente:
-
-| Tipo | Descripción | Ubicación |
-|------|-------------|-----------|
-| **CSV** | Horarios optimizados | `datos_estructurados/` |
-| **Excel** | Horarios formateados | `comparativas/` |
-| **Gráficos** | Visualizaciones PNG | `comparativas/graficos/` |
-| **Comparativa** | Excel consolidado | `comparativas/` |
-| **Logs** | Salida de consola | Terminal |
-
-**Archivos principales:**
-- `00_Horario_PreAsignado_P1.csv`
-- `04_Horario_Optimizado_Greedy.csv`
-- `05_Horario_Optimizado_ML.csv`
-- `06_Horario_Optimizado_Genetico.csv`
-- `comparativa_completa.xlsx`
-
----
-
-## 🔗 Enlaces a Documentación
-
-**GitHub Repository:**
-- 🔗 https://github.com/jjho05/Sistema-Salones-ISC
-
-**Documentos clave:**
-- 📄 [README.md](../../README.md)
-- 📄 [INSTALACION.md](../../INSTALACION.md)
-- 📄 [Estado del Arte](../../literatura/estado_del_arte.md)
-- 📄 [Teoría Matemática](../../literatura/teoria_matematica_detallada.md)
-- 📄 [Ejemplos Didácticos](../../ejemplos_didacticos/README.md)
-
-**Resúmenes de fases:**
-- 📄 [Fase 1: Estado del Arte](../../literatura/RESUMEN_FASE1.md)
-- 📄 [Fase 2: Teoría Matemática](../../literatura/RESUMEN_FASE2.md)
-- 📄 [Fase 4: Documentación](../../literatura/RESUMEN_FASE4.md)
-
----
-
-## 📞 Soporte y Contacto
-
-**Autor:** Jesús Olvera
-
-- 🎓 Instituto Tecnológico de Ciudad Madero
-- 💼 GitHub: [@jjho05](https://github.com/jjho05)
-- 📧 Email: jjho.reivaj05@gmail.com
-
-**Para reportar problemas:**
-- 🐛 [GitHub Issues](https://github.com/jjho05/Sistema-Salones-ISC/issues)
-- 📧 Email directo
-- 💬 Discusiones en GitHub
-
-**Contribuciones bienvenidas:**
-- Fork → Branch → Commit → Push → Pull Request
 
 
 ---
 
 <!-- _class: lead blue -->
-# Parámetros y Configuración
-
-**Ajuste y Optimización de Algoritmos**
-
----
-
-## ⚙️ Parámetros por Algoritmo
-
-Cada algoritmo tiene parámetros críticos que afectan su rendimiento:
-
-| Algoritmo | Parámetros Principales | Valores Óptimos |
-|-----------|------------------------|-----------------|
-| **Greedy+HC** | Pesos, max_iteraciones | w=10, iter=1000 |
-| **ML** | n_estimators, max_depth | 100, 20 |
-| **Genético** | Población, prob_mutación | 100, 0.1 |
-
-**Documentación completa:** [`PARAMETROS.md`](../../PARAMETROS.md)
-
----
-
-## 🔨 Greedy + Hill Climbing - Parámetros
-
-### Pesos de la Función Objetivo
-
-| Componente | Peso | Justificación |
-|------------|------|---------------|
-| **Movimientos** | 10.0 | Objetivo principal |
-| **Cambios de piso** | 5.0 | Importante secundario |
-| **Distancia** | 1.0 | Refinamiento fino |
-| **Penalización P2** | 50.0 | Soft constraint alta |
-| **Penalización P3** | 25.0 | Soft constraint baja |
-
-**Jerarquía:**
-```
-Movimientos (10.0) > Cambios Piso (5.0) > Distancia (1.0)
-```
-
----
-
-## 🔨 Greedy + Hill Climbing - Convergencia
-
-### Criterios de Parada
-
-| Criterio | Valor | Descripción |
-|----------|-------|-------------|
-| **max_iteraciones** | 1000 | Máximo absoluto |
-| **max_sin_mejora** | 50 | Parada temprana |
-| **mejora_minima** | 0.01 | Umbral de mejora |
-
-**Convergencia típica:**
-- 200-400 iteraciones
-- ~30 segundos
-- Óptimo local garantizado
-
----
-
-## 🤖 Machine Learning - Parámetros
-
-### Random Forest
-
-| Parámetro | Valor | Rango Probado | Resultado |
-|-----------|-------|---------------|-----------|
-| **n_estimators** | 100 | [50, 500] | 94% precisión |
-| **max_depth** | 20 | [10, None] | Evita overfitting |
-| **min_samples_split** | 5 | [2, 20] | Balance |
-
-**Curva de aprendizaje:**
-```
-Árboles: 10 → 50 → 100 → 200
-Precisión: 82% → 91% → 94% → 94.5%
-Tiempo: 1s → 5s → 10s → 20s
-```
-
-**Punto óptimo:** 100 árboles ✅
-
----
-
-## 🤖 Machine Learning - Features
-
-### Features Extraídas
-
-| Feature | Tipo | Importancia |
-|---------|------|-------------|
-| **num_estudiantes** | Numérico | 35% |
-| **tipo_clase** | Categórico | 25% |
-| **hora_dia** | Numérico | 15% |
-| **profesor_id** | Categórico | 15% |
-| **dia_semana** | Categórico | 10% |
-
-**Normalización:** Todos los valores en [0, 1]
-
----
-
-## 🧬 Algoritmo Genético - Parámetros
-
-### Población y Evolución
-
-| Parámetro | Valor | Justificación |
-|-----------|-------|---------------|
-| **Población** | 100 | Balance diversidad/tiempo |
-| **Generaciones** | 200 | Convergencia completa |
-| **Elitismo** | 5 | Preserva mejores |
-| **Prob. cruce** | 0.8 | Alta exploración |
-| **Prob. mutación** | 0.1 | Balance |
-
-**Tiempo total:** ~74 segundos
-
----
-
-## 🧬 Algoritmo Genético - Operadores
-
-### Cruce y Mutación
-
-**Cruce de un punto:**
-```python
-punto = len(padre1) // 2
-hijo1 = padre1[:punto] + padre2[punto:]
-hijo2 = padre2[:punto] + padre1[punto:]
-```
-
-**Mutación:**
-```python
-for i in range(len(individuo)):
-    if random.random() < prob_mutacion:
-        individuo[i] = salon_aleatorio_compatible()
-```
-
-**Selección:** Torneo de tamaño 3
-
----
-
-## 📊 Análisis de Sensibilidad
-
-### Experimento 1: Pesos (Greedy+HC)
-
-| w_movimientos | Movimientos | Energía Total |
-|---------------|-------------|---------------|
-| 5.0 | 320 | 5780 |
-| **10.0** | **314** | **5181** ✅ |
-| 15.0 | 312 | 6045 |
-| 20.0 | 310 | 7285 |
-
-**Conclusión:** w=10.0 es óptimo
-
----
-
-## 📊 Análisis de Sensibilidad (cont.)
-
-### Experimento 2: Población (Genético)
-
-| Población | Tiempo | Mejor Fitness |
-|-----------|--------|---------------|
-| 20 | 15s | 0.042 |
-| 50 | 35s | 0.047 |
-| **100** | **74s** | **0.050** ✅ |
-| 200 | 150s | 0.051 |
-
-**Conclusión:** 100 es punto óptimo
-
-### Experimento 3: Árboles (ML)
-
-| n_estimators | Precisión | Tiempo |
-|--------------|-----------|--------|
-| 50 | 91% | 5s |
-| **100** | **94%** | **10s** ✅ |
-| 200 | 94.5% | 20s |
-
-**Conclusión:** 100 árboles suficiente
-
----
-
-## 🔧 Proceso de Tuning
-
-### Metodología Aplicada
-
-1. **Grid Search Grueso**
-   - Probar rangos amplios
-   - Identificar regiones prometedoras
-
-2. **Refinamiento Local**
-   - Ajuste fino en vecindario
-   - Optimización de valores
-
-3. **Validación Cruzada**
-   - 10 ejecuciones con diferentes semillas
-   - Calcular media y desviación estándar
-
-**Tiempo invertido:** ~55 horas de cómputo
-
----
-
-## 🔧 Resultados del Tuning
-
-### Mejoras Logradas
-
-| Algoritmo | Métrica | Antes | Después | Mejora |
-|-----------|---------|-------|---------|--------|
-| **Greedy+HC** | Energía | 6500 | 5181 | **-20%** |
-| **ML** | Precisión | 82% | 94% | **+12%** |
-| **Genético** | Tiempo | 95s | 74s | **-22%** |
-
-**Conclusión:** Tuning crítico para rendimiento óptimo
-
----
-
-## 📋 Criterios de Convergencia
-
-### Por Algoritmo
-
-| Algoritmo | Criterio Principal | Valor |
-|-----------|-------------------|-------|
-| **Greedy+HC** | Sin mejora en N iter | 50 |
-| **ML** | Validación cruzada | 94% |
-| **Genético** | Max generaciones | 200 |
-
-**Todos incluyen:**
-- Máximo de iteraciones/generaciones
-- Criterio de parada temprana
-- Umbral de mejora mínima
-
----
-
-## 🎯 Guía de Ajuste Rápido
-
-### ¿Cuándo ajustar?
-
-**Ajustar si:**
-- ✅ Resultados no satisfactorios
-- ✅ Tiempo de ejecución excesivo
-- ✅ Convergencia prematura
-
-**Tabla de referencia:**
-
-| Problema | Parámetro | Acción |
-|----------|-----------|--------|
-| Convergencia lenta | max_iteraciones | ↑ |
-| Tiempo excesivo | tam_poblacion | ↓ |
-| Baja precisión | n_estimators | ↑ |
-| Movimientos altos | w_movimientos | ↑ |
-
----
-
-## 📊 Resumen de Parámetros
-
-### Configuración Óptima Final
-
-```python
-# Greedy + Hill Climbing
-PESOS = {
-    'movimientos': 10.0,
-    'cambios_piso': 5.0,
-    'distancia': 1.0
-}
-MAX_ITER = 1000
-MAX_SIN_MEJORA = 50
-
-# Machine Learning
-N_ESTIMATORS = 100
-MAX_DEPTH = 20
-
-# Algoritmo Genético
-POBLACION = 100
-GENERACIONES = 200
-PROB_CRUCE = 0.8
-PROB_MUTACION = 0.1
-```
-
----
-
----
 # Algoritmo Greedy + Hill Climbing
 
 **Construcción Voraz y Refinamiento Local**
@@ -3632,6 +3111,9 @@ $$
 ---
 
 ## 📖 Ejemplo Didáctico: Greedy + Hill Climbing
+
+> [!NOTE]
+> **Este es un ejemplo didáctico simplificado** con un problema pequeño (10 clases, 4 salones, 4 profesores) para demostrar el funcionamiento del algoritmo de manera clara y comprensible.
 
 **Problema Simplificado para Demostración**
 
@@ -4906,6 +4388,9 @@ Sin embargo, requiere **cuidadoso feature engineering** y **datos de entrenamien
 
 ## 📖 Ejemplo Didáctico: Machine Learning
 
+> [!NOTE]
+> **Este es un ejemplo didáctico simplificado** con un problema pequeño (10 clases, 4 salones, 4 profesores) para demostrar cómo funciona el enfoque de Machine Learning de manera clara y comprensible.
+
 **Problema Simplificado para Demostración**
 
 ---
@@ -5774,6 +5259,9 @@ Generación    Mejor      Promedio    Peor       Diversidad
 
 ## 📖 Ejemplo Didáctico: Algoritmo Genético
 
+> [!NOTE]
+> **Este es un ejemplo didáctico simplificado** con un problema pequeño (10 clases, 4 salones, 4 profesores) para demostrar el funcionamiento del algoritmo genético de manera clara y comprensible.
+
 **Problema Simplificado para Demostración**
 
 ---
@@ -6028,6 +5516,108 @@ Es la opción recomendada cuando se dispone de tiempo y se requiere la mejor sol
 
 6. Michalewicz, Z. (1996). *Genetic Algorithms + Data Structures = Evolution Programs*. Springer.
 
+
+---
+
+<!-- _class: lead blue -->
+# Parámetros y Configuración
+
+**Ajuste y Optimización de Algoritmos**
+
+---
+
+## ⚙️ Parámetros por Algoritmo
+
+Cada algoritmo tiene parámetros críticos que afectan su rendimiento:
+
+| Algoritmo | Parámetros Principales | Valores Óptimos |
+|-----------|------------------------|--------------------|
+| **Greedy+HC** | Pesos, max_iteraciones | w=10, iter=1000 |
+| **ML** | n_estimators, max_depth | 100, 20 |
+| **Genético** | Población, prob_mutación | 100, 0.1 |
+
+**Documentación completa:** [`PARAMETROS.md`](../../PARAMETROS.md)
+
+---
+
+## 🔨 Greedy + Hill Climbing - Parámetros
+
+### Pesos de la Función Objetivo
+
+| Componente | Peso | Justificación |
+|------------|------|---------------|
+| **Movimientos** | 10.0 | Objetivo principal |
+| **Cambios de piso** | 5.0 | Importante secundario |
+| **Distancia** | 1.0 | Refinamiento fino |
+| **Penalización P2** | 50.0 | Soft constraint alta |
+| **Penalización P3** | 25.0 | Soft constraint baja |
+
+---
+
+## 🤖 Machine Learning - Parámetros
+
+### Random Forest
+
+| Parámetro | Valor | Rango Probado | Resultado |
+|-----------|-------|---------------|-----------|
+| **n_estimators** | 100 | [50, 500] | 94% precisión |
+| **max_depth** | 20 | [10, None] | Evita overfitting |
+| **min_samples_split** | 5 | [2, 20] | Balance |
+
+---
+
+## 🧬 Algoritmo Genético - Parámetros
+
+### Población y Evolución
+
+| Parámetro | Valor | Justificación |
+|-----------|-------|---------------|
+| **Población** | 100 | Balance diversidad/tiempo |
+| **Generaciones** | 200 | Convergencia completa |
+| **Elitismo** | 5 | Preserva mejores |
+| **Prob. cruce** | 0.8 | Alta exploración |
+| **Prob. mutación** | 0.1 | Balance |
+
+---
+
+## 📊 Análisis de Sensibilidad
+
+### Experimento 1: Pesos (Greedy+HC)
+
+| w_movimientos | Movimientos | Energía Total |
+|---------------|-------------|---------------|
+| 5.0 | 320 | 5780 |
+| **10.0** | **314** | **5181** ✅ |
+| 15.0 | 312 | 6045 |
+| 20.0 | 310 | 7285 |
+
+**Conclusión:** w=10.0 es óptimo
+
+---
+
+## 📊 Resumen de Parámetros
+
+### Configuración Óptima Final
+
+```python
+# Greedy + Hill Climbing
+PESOS = {
+    'movimientos': 10.0,
+    'cambios_piso': 5.0,
+    'distancia': 1.0
+}
+MAX_ITER = 1000
+
+# Machine Learning
+N_ESTIMATORS = 100
+MAX_DEPTH = 20
+
+# Algoritmo Genético
+POBLACION = 100
+GENERACIONES = 200
+PROB_CRUCE = 0.8
+PROB_MUTACION = 0.1
+```
 
 ---
 
@@ -8669,6 +8259,103 @@ Consulta la documentación completa en `docs/` o contacta al equipo de desarroll
 **Última actualización**: 2025-12-21  
 **Versión**: 2.0.0
 
+
+---
+
+<!-- _class: lead blue -->
+# Documentación del Proyecto
+
+**Guías Completas de Instalación y Uso**
+
+---
+
+## 📚 Documentación Disponible
+
+El proyecto incluye **documentación completa** para facilitar su uso y comprensión:
+
+### Documentos Principales
+
+| Documento | Descripción | Ubicación |
+|-----------|-------------|-----------|
+| **README.md** | Guía principal del proyecto | Raíz |
+| **INSTALACION.md** | Guía de instalación detallada | Raíz |
+| **Estado del Arte** | Revisión de literatura | `literatura/` |
+| **Teoría Matemática** | Fundamentos formales | `literatura/` |
+| **Ejemplos Didácticos** | Código educativo | `ejemplos_didacticos/` |
+
+---
+
+## 📖 README.md - Guía Principal
+
+**Contenido del README:**
+
+- 🎯 Descripción general del problema
+- ✨ Características principales
+- 📚 Estado del Arte (15 artículos)
+- 🔢 Fundamentos matemáticos
+- 🤖 4 algoritmos explicados
+- 📖 Ejemplos didácticos
+- 🏗️ Arquitectura del sistema
+- 💻 Guía de instalación
+- 🚀 Instrucciones de uso
+- 📊 Resultados y métricas
+
+**Características:**
+- ✅ 486 líneas de documentación
+- ✅ Badges profesionales
+- ✅ Diagramas Mermaid
+- ✅ Tablas comparativas
+
+---
+
+## 💻 INSTALACION.md - Guía de Instalación
+
+**Cobertura:**
+
+### Sistemas Operativos
+- 🐧 **Linux/macOS:** Instrucciones paso a paso
+- 🪟 **Windows:** Guía específica con screenshots
+- 🐍 **Entornos virtuales:** Configuración recomendada
+
+### Contenido
+1. Requisitos previos
+2. Instalación por sistema operativo
+3. Configuración de entorno virtual
+4. Instalación de dependencias
+5. Verificación de instalación
+6. **Troubleshooting:** 9 problemas comunes resueltos
+
+---
+
+## 🚀 Opciones de Ejecución
+
+### Opción 1: Ejecución Completa (Recomendado)
+
+```bash
+python3 ejecutar_todos.py
+```
+
+**Ejecuta automáticamente:**
+1. Pre-asignación P1
+2. Optimizador Greedy
+3. Optimizador ML
+4. Optimizador Genético
+5. Corrección de prioridades
+6. Generación de comparativas
+
+---
+
+## 🔗 Enlaces a Documentación
+
+**GitHub Repository:**
+- 🔗 https://github.com/jjho05/Sistema-Salones-ISC
+
+**Documentos clave:**
+- 📄 [README.md](../../README.md)
+- 📄 [INSTALACION.md](../../INSTALACION.md)
+- 📄 [Estado del Arte](../../literatura/estado_del_arte.md)
+- 📄 [Teoría Matemática](../../literatura/teoria_matematica_detallada.md)
+- 📄 [Ejemplos Didácticos](../../ejemplos_didacticos/README.md)
 
 ---
 
