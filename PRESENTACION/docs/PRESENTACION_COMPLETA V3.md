@@ -1572,12 +1572,6 @@ d(s_1, s_2) = \begin{cases}
 \end{cases}
 $$
 
-**Donde:**
-- $\begin{cases}\cdot\end{cases}$ = definición por casos
-- Mismo salón: distancia 0 (sin movimiento)
-- Mismo piso: distancia 1 (movimiento horizontal)
-- Diferente piso: distancia 10 (movimiento vertical, más costoso)
-
 ---
 ### 2.3 Penalizaciones
 
@@ -3210,9 +3204,6 @@ Solución Final:
 Mejora: 50.0%
 ✅ Completado!
 ```
-
----
-
 ---
 
 ## 4. Protección de PRIORIDAD 1
@@ -4473,8 +4464,16 @@ Movimientos: 5
 🤖 Predicciones con ML:
   C1 → S2
   C2 → S1
+  C3 → S3
+  C4 → S2
   ...
+```
 
+---
+
+### Resultados del Ejemplo ML
+
+```
 📊 Comparación:
   Movimientos (aleatorio): 5
   Movimientos (ML): 3
@@ -4482,8 +4481,6 @@ Movimientos: 5
 
 ✅ Completado!
 ```
-
----
 
 ---
 
@@ -5302,6 +5299,10 @@ def cruce(p1, p2):
     return hijo1, hijo2
 ```
 
+---
+
+### Operadores Genéticos (cont.)
+
 **Mutación:**
 ```python
 def mutacion(ind, prob=0.1):
@@ -5374,10 +5375,19 @@ Gen 0: Fitness = 0.0476
 Gen 10: Fitness = 0.0476
 ...
 Gen 99: Fitness = 0.0476
+```
 
+---
+
+### Resultados del Ejemplo
+
+```
 🏆 Mejor solución encontrada:
   C1 → S3
   C2 → S3
+  C3 → S1
+  C4 → S2
+  C5 → S4
   ...
 
 Fitness final: 0.0476
@@ -5385,8 +5395,6 @@ Mejora sobre aleatorio: 142.9%
 
 ✅ Completado!
 ```
-
----
 
 ---
 
@@ -5858,8 +5866,15 @@ def aplicar_correcciones(self, df, violaciones):
         clase = violacion['clase']
         
         # Construir clave de ocupación
-        key = (clase['Dia'], clase['Bloque_Horario'], salon_esperado)
-        
+        key = (clase['Dia'], clase['Bloque_Horario'], 
+               salon_esperado)
+```
+
+---
+
+### 4.1 Algoritmo Principal (cont.)
+
+```python
         # Verificar si salón está libre
         if key not in ocupacion:
             # Corrección simple
@@ -5981,7 +5996,9 @@ def resolver_conflicto_correccion(self, df, idx_p1, salon_p1, ocupacion, violaci
 Si el salón alternativo también está ocupado:
 
 ```python
-def desplazar_en_cadena(self, df, idx_inicial, salon_objetivo, ocupacion, profundidad=0):
+def desplazar_en_cadena(self, df, idx_inicial, 
+                        salon_objetivo, ocupacion, 
+                        profundidad=0):
     """
     Desplaza clases en cadena hasta liberar salón objetivo
     """
@@ -5992,11 +6009,17 @@ def desplazar_en_cadena(self, df, idx_inicial, salon_objetivo, ocupacion, profun
     
     clase = df.iloc[idx_inicial]
     key = (clase['Dia'], clase['Bloque_Horario'], salon_objetivo)
-    
-    # Si salón está libre, asignar directamente
+```
+
+---
+
+### 5.2 Desplazamiento en Cadena (cont.)
+
+```python
+    # Si el salón está libre, asignar directamente
     if key not in ocupacion:
-        df.loc[idx_inicial, 'Salon'] = salon_objetivo
-        ocupacion[key] = idx_inicial
+        df.at[idx_inicial, 'Salon'] = salon_objetivo
+        ocupacion[key] = idx_inicial # Actualizar ocupación
         return True
     
     # Salón ocupado: desplazar ocupante primero
@@ -6008,12 +6031,10 @@ def desplazar_en_cadena(self, df, idx_inicial, salon_objetivo, ocupacion, profun
         return False
     
     # Buscar salón para ocupante
-    salones_alt = self.obtener_salones_validos(clase_ocupante)
+    salones_alternativos = self.obtener_salones_validos(clase_ocupante)
     
-    for salon_alt in salones_alt:
+    for salon_alt in salones_alternativos:
         # Intentar desplazar ocupante recursivamente
-        if self.desplazar_en_cadena(df, idx_ocupante, salon_alt, 
-                                    ocupacion, profundidad + 1):
             # Ocupante desplazado exitosamente
             df.loc[idx_inicial, 'Salon'] = salon_objetivo
             ocupacion[key] = idx_inicial
@@ -6137,7 +6158,7 @@ ACCIÓN REQUERIDA:
 2. Negociar cambio de horario o salón alternativo
 3. Actualizar preferencias en configuración
 4. Re-ejecutar optimización
-"""
+
 ```
 
 ---
@@ -7420,16 +7441,22 @@ La aplicación web del Sistema de Asignación de Salones se encuentra actualment
    - Vista de horarios por salón
    - Filtros básicos (día, semestre)
 
+---
+
 2. **Interfaz de Usuario**
    - Diseño responsive básico
    - Navegación entre vistas
    - Tabla de horarios
    - Exportación a PDF (básica)
 
+---
+
 3. **Backend Básico**
    - API REST simple
    - Carga de datos desde CSV
    - Endpoints para consultas básicas
+
+---
 
 ### ⚠️ Limitaciones Conocidas
 
@@ -7444,6 +7471,8 @@ La aplicación web del Sistema de Asignación de Salones se encuentra actualment
    - ⚠️ Sin caché de datos
    - ⚠️ Carga completa en cada request
    - ⚠️ No hay paginación
+
+---
 
 3. **Funcionalidad**
    - ❌ No permite edición de horarios
@@ -7535,12 +7564,16 @@ http://localhost:5000/horario/salon/FFA
 - [ ] Sanitización de datos
 - [ ] HTTPS obligatorio
 
+---
+
 ### Fase 2: Funcionalidad Core
 - [ ] Integración con optimizadores
 - [ ] Edición de horarios (con permisos)
 - [ ] Comparación de horarios
 - [ ] Exportación avanzada (Excel, iCal, PDF mejorado)
 - [ ] Sistema de notificaciones
+
+---
 
 ### Fase 3: Rendimiento
 - [ ] Caché de datos
@@ -7549,12 +7582,16 @@ http://localhost:5000/horario/salon/FFA
 - [ ] Optimización de queries
 - [ ] CDN para assets
 
+---
+
 ### Fase 4: UX/UI
 - [ ] Diseño profesional
 - [ ] Modo oscuro
 - [ ] Accesibilidad (WCAG 2.1)
 - [ ] PWA (Progressive Web App)
 - [ ] Responsive mejorado
+
+---
 
 ### Fase 5: Integración
 - [ ] API con sistema institucional
@@ -7927,6 +7964,8 @@ python3 corregir_prioridades.py datos_estructurados/04_Horario_Optimizado_Greedy
 - 30 corridas por algoritmo
 - 90 experimentos totales
 - Nivel de significancia: α = 0.05
+
+---
 
 **Pruebas aplicadas:**
 1. Shapiro-Wilk (normalidad)
@@ -8316,6 +8355,8 @@ El proyecto incluye **documentación completa** para facilitar su uso y comprens
 - 🐧 **Linux/macOS:** Instrucciones paso a paso
 - 🪟 **Windows:** Guía específica con screenshots
 - 🐍 **Entornos virtuales:** Configuración recomendada
+
+---
 
 ### Contenido
 1. Requisitos previos
