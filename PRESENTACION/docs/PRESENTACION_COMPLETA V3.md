@@ -4419,6 +4419,7 @@ class ModeloSimple:
                 return salon_idx
         return 1
 ```
+---
 
 **Features extraídas:**
 - `f[0]`: Número de estudiantes (normalizado)
@@ -8402,8 +8403,6 @@ python3 ejecutar_todos.py
 
 <!-- _class: lead blue -->
 # ¡Gracias!
-
-**Preguntas y Discusión**
 
 ---
 
