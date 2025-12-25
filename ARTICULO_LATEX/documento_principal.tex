@@ -1,4 +1,47 @@
+%  LaTeX - Sistema de Asignación de Salones ISC
+\documentclass[12pt,a4paper]{article}
 
+% Paquetes necesarios
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+
+% Configuración de página
+\geometry{margin=2.5cm}
+
+% Configuración de listings
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    backgroundcolor=\color{gray!10}
+}
+
+% Título y autor
+\title{Sistema de Asignación de Salones ISC: Optimización Inteligente de Espacios Académicos}
+\author{Anónimo}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Sistema inteligente de optimización para la asignación de 680 clases a 21 salones en el programa de Ingeniería en Sistemas Computacionales del Instituto Tecnológico de Ciudad Madero. El sistema implementa cuatro algoritmos de optimización: heurística del profesor, Greedy con Hill Climbing, Machine Learning (Random Forest) y Algoritmo Genético. Se presenta un mecanismo de pre-asignación que garantiza el 100\% de cumplimiento de las preferencias prioritarias (Prioridad 1) mientras optimiza tres objetivos: minimizar movimientos de profesores entre salones, reducir cambios de piso y disminuir la distancia total recorrida. Los resultados experimentales de 90 ejecuciones demuestran que el enfoque Greedy+Hill Climbing logra el mejor rendimiento general con 314 movimientos (mejora del 12\% sobre la línea base), 206 cambios de piso (reducción del 28\%) y resultados consistentes. La validación estadística mediante ANOVA, pruebas post-hoc de Tukey HSD y análisis de tamaño de efecto de Cohen confirma diferencias significativas entre todos los algoritmos. El sistema está implementado en Python con documentación completa y está disponible como software de código abierto.
+\end{abstract}
+
+\textbf{Palabras clave:} asignación de salones; optimización combinatoria; algoritmos híbridos; hill climbing; machine learning; algoritmo genético; programación académica; satisfacción de restricciones
+
+\tableofcontents
+\newpage
 
 \input{parte_01.tex}
 \input{parte_02.tex}
