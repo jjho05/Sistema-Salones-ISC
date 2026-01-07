@@ -1,6 +1,30 @@
-# Guía de Uso del Sistema
+# 🚀 Guía de Uso Rápido - Sistema de Asignación de Salones ISC
 
-## Instalación
+> **Guía práctica y sencilla** para ejecutar el sistema de optimización de horarios. Si buscas documentación técnica completa, consulta el [README.md](../README.md) principal.
+
+---
+
+## ⚡ Inicio Rápido (5 minutos)
+
+> [!TIP]
+> **¿Primera vez usando el sistema? Sigue estos 3 pasos:**
+
+```bash
+# 1️⃣ Instalar dependencias
+pip install -r requirements.txt
+
+# 2️⃣ Ejecutar todo el sistema
+python3 ejecutar_todos.py
+
+# 3️⃣ Ver resultados
+open comparativas/final/Comparativa_Completa.xlsx
+```
+
+**¡Listo!** 🎉 El sistema habrá generado horarios optimizados en ~2-3 minutos.
+
+---
+
+## 📦 Instalación
 
 ### Requisitos Previos
 
@@ -22,7 +46,7 @@ pip install pandas openpyxl matplotlib seaborn scikit-learn
 
 ## Configuración Inicial
 
-### 1. Configurar Materias y Preferencias
+### 1️⃣ Configurar Materias y Preferencias
 
 Ejecutar la interfaz gráfica:
 
@@ -30,13 +54,14 @@ Ejecutar la interfaz gráfica:
 python3 configurador_materias.py
 ```
 
-**Pasos:**
-1. Configurar cada materia (horas teoría/lab, distribución)
-2. Asignar preferencias de profesores (salón preferido + prioridad)
-3. Configurar grupos de primer semestre
-4. Guardar configuración
+> [!TIP]
+> **Pasos a seguir:**
+> 1. Configurar cada materia (horas teoría/lab, distribución)
+> 2. Asignar preferencias de profesores (salón preferido + prioridad)
+> 3. Configurar grupos de primer semestre
+> 4. Guardar configuración
 
-### 2. Generar Horario Inicial
+### 2️⃣ Generar Horario Inicial
 
 El horario inicial debe ser un CSV con las siguientes columnas:
 
@@ -44,35 +69,37 @@ El horario inicial debe ser un CSV con las siguientes columnas:
 Dia,Bloque_Horario,Materia,Grupo,Profesor,Salon,Es_Invalido,Tipo_Salon,Piso
 ```
 
-**Ejemplo:**
-```csv
-Lunes,0700,FUNDAMENTOS DE PROGRAMACIÓN,1527A,PROFESOR 34,FF1,0,Teoría,0
-Lunes,0800,FUNDAMENTOS DE PROGRAMACIÓN,1527A,PROFESOR 34,FF1,0,Teoría,0
-```
+> [!IMPORTANT]
+> **Ejemplo de formato correcto:**
+> ```csv
+> Lunes,0700,FUNDAMENTOS DE PROGRAMACIÓN,1527A,PROFESOR 34,FF1,0,Teoría,0
+> Lunes,0800,FUNDAMENTOS DE PROGRAMACIÓN,1527A,PROFESOR 34,FF1,0,Teoría,0
+> ```
 
-Guardar como: `datos_estructurados/01_Horario_Inicial.csv`
+📁 **Guardar como:** `datos_estructurados/01_Horario_Inicial.csv`
 
-## Ejecución
+## ▶️ Ejecución
 
-### Opción 1: Ejecutar Todo Automáticamente
+### ⚡ Opción 1: Ejecutar Todo Automáticamente (Recomendado)
 
 ```bash
 python3 ejecutar_todos.py
 ```
 
-Este script ejecuta:
-1. Pre-asignación PRIORIDAD 1
-2. Optimizador Greedy
-3. Corrección Greedy
-4. Optimizador ML
-5. Corrección ML
-6. Optimizador Genético
-7. Corrección Genético
-8. Generación de comparativas
+> [!NOTE]
+> **Este script ejecuta automáticamente:**
+> 1. ✅ Pre-asignación PRIORIDAD 1
+> 2. ✅ Optimizador Greedy
+> 3. ✅ Corrección Greedy
+> 4. ✅ Optimizador ML
+> 5. ✅ Corrección ML
+> 6. ✅ Optimizador Genético
+> 7. ✅ Corrección Genético
+> 8. ✅ Generación de comparativas
 
-**Tiempo estimado:** ~2-3 minutos
+⏱️ **Tiempo estimado:** ~2-3 minutos
 
-### Opción 2: Ejecutar Paso por Paso
+### 🔧 Opción 2: Ejecutar Paso por Paso
 
 #### Paso 1: Pre-asignar PRIORIDAD 1
 
@@ -102,6 +129,15 @@ python3 optimizador_genetico.py
 - `datos_estructurados/05_Horario_Optimizado_ML.csv`
 - `datos_estructurados/06_Horario_Optimizado_Genetico.csv`
 
+> [!NOTE]
+> **¿Cuál optimizador elegir?**
+> 
+> | Optimizador | Velocidad | Calidad | Cuándo usarlo |
+> |-------------|-----------|---------|---------------|
+> | **Greedy** | ⚡⚡ Rápido (~30s) | ⭐⭐⭐⭐ Excelente | **Recomendado para producción** |
+> | **ML** | ⚡⚡⚡ Muy rápido (~16s) | ⭐⭐⭐ Buena | Cuando necesitas resultados rápidos |
+> | **Genético** | 🐢 Lento (~74s) | ⭐⭐⭐⭐⭐ La mejor | Cuando buscas la mejor calidad posible |
+
 #### Paso 3: Corregir (Opcional)
 
 ```bash
@@ -119,7 +155,7 @@ python3 generar_comparativa_completa.py
 - Gráficos en `comparativas/final/graficos/`
 - Excel consolidado en `comparativas/final/`
 
-## Interpretación de Resultados
+## 📊 Interpretación de Resultados
 
 ### Archivos Generados
 
@@ -205,28 +241,30 @@ python3 generar_comparativa_completa.py
 
 **Objetivo:** Minimizar
 
-## Solución de Problemas
+## 🔧 Solución de Problemas
 
-### Error: "No se encontró el archivo"
+### ❌ Error: "No se encontró el archivo"
 
 **Causa:** Archivo de entrada no existe
 
-**Solución:**
-```bash
-# Verificar que existe el horario inicial
-ls datos_estructurados/01_Horario_Inicial.csv
+> [!WARNING]
+> **Solución:**
+> ```bash
+> # Verificar que existe el horario inicial
+> ls datos_estructurados/01_Horario_Inicial.csv
+> 
+> # Si no existe, generarlo o copiarlo
+> ```
 
-# Si no existe, generarlo o copiarlo
-```
-
-### Error: "PRIORIDAD 1 no al 100%"
+### ⚠️ Error: "PRIORIDAD 1 no al 100%"
 
 **Causa:** Conflictos en preferencias o salones insuficientes
 
-**Solución:**
-1. Ejecutar `corregir_prioridades.py`
-2. Verificar preferencias en `preferencias_profesores.json`
-3. Revisar disponibilidad de salones
+> [!CAUTION]
+> **Solución paso a paso:**
+> 1. Ejecutar `corregir_prioridades.py`
+> 2. Verificar preferencias en `preferencias_profesores.json`
+> 3. Revisar disponibilidad de salones
 
 ### Optimizador muy lento
 
@@ -256,7 +294,7 @@ import random
 random.seed(42)
 ```
 
-## Personalización
+## ⚙️ Personalización
 
 ### Modificar Pesos de Optimización
 
@@ -288,7 +326,7 @@ def generar_excel_formato(csv_file, output_file):
     ...
 ```
 
-## Mejores Prácticas
+## ✨ Mejores Prácticas
 
 ### 1. Siempre Ejecutar Pre-asignación
 
@@ -326,7 +364,7 @@ cp preferencias_profesores.json preferencias_profesores.json.bak
 cp configuracion_materias.json configuracion_materias.json.bak
 ```
 
-## Flujo de Trabajo Recomendado
+## 🔄 Flujo de Trabajo Recomendado
 
 ```mermaid
 graph TD
@@ -352,9 +390,11 @@ graph TD
     O --> C
 ```
 
-## Contacto y Soporte
+## 📞 Contacto y Soporte
 
-Para preguntas o problemas:
-1. Revisar esta documentación
-2. Consultar `docs/` para detalles técnicos
-3. Contactar al equipo de desarrollo
+> [!TIP]
+> **Para preguntas o problemas:**
+> 1. 📖 Revisar esta documentación
+> 2. 📚 Consultar `docs/` para detalles técnicos
+> 3. 💬 Abrir un [issue en GitHub](https://github.com/jjho05/Sistema-Salones-ISC/issues)
+> 4. 📧 Contactar: jjho.reivaj05@gmail.com

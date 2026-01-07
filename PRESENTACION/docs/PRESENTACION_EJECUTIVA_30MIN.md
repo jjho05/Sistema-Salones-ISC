@@ -1,7 +1,7 @@
 ---
 marp: true
 theme: default
-paginate: true
+paginate: false
 math: mathjax
 style: |
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap');

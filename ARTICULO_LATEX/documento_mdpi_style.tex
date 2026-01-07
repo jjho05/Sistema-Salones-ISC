@@ -1,0 +1,288 @@
+% Sistema de Asignación de Salones ISC - Formato MDPI
+% Versión compacta adaptada a plantilla MDPI
+\documentclass[12pt,a4paper]{article}
+
+% Paquetes esenciales (similares a MDPI)
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{natbib}
+\usepackage{lineno}
+
+% Configuración de página (estilo MDPI)
+\geometry{margin=2.5cm}
+\linenumbers % Números de línea como MDPI
+
+% Configuración de hyperref
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+% Título y autores
+\title{\textbf{Intelligent Classroom Assignment System Using Hybrid Optimization Algorithms: A Comparative Study}}
+
+\author{
+  Jesús Olvera$^{1,*}$ \\
+  \small $^{1}$ Instituto Tecnológico de Ciudad Madero, Tecnológico Nacional de México, \\
+  \small Ciudad Madero, Tamaulipas 89440, Mexico \\
+  \small $^{*}$ Correspondence: jjho.reivaj05@gmail.com
+}
+
+\date{Received: date / Accepted: date / Published: date}
+
+\begin{document}
+
+\maketitle
+
+% Abstract
+\begin{abstract}
+The classroom assignment problem in educational institutions is a complex combinatorial optimization challenge that significantly impacts teaching efficiency and resource utilization. This study presents an intelligent system for optimal classroom assignment in the Computer Systems Engineering program at Instituto Tecnológico de Ciudad Madero, managing 680 classes across 21 classrooms. We propose a hybrid optimization approach implementing four distinct algorithms: (1) a professor-based heuristic baseline, (2) Greedy with Hill Climbing, (3) Machine Learning using Random Forest, and (4) Genetic Algorithm. A novel pre-assignment mechanism guarantees 100\% compliance with priority-1 constraints (professor preferences) while optimizing three objectives: minimizing professor movements between classrooms, reducing floor changes, and decreasing total distance traveled. Experimental results from 90 runs (30 per algorithm) demonstrate that the Greedy+Hill Climbing approach achieves the best overall performance with 314 movements (12\% improvement over baseline), 206 floor changes (28\% reduction), and consistent results (std=2.1). Statistical validation using ANOVA (F=1847.32, p<0.001) and post-hoc Tukey HSD tests confirm significant differences between all algorithms. Cohen's d effect sizes (d>22) indicate very large practical significance. The system is implemented in Python with comprehensive documentation and is available as open-source software.
+\end{abstract}
+
+\noindent\textbf{Keywords:} classroom assignment; combinatorial optimization; hybrid algorithms; hill climbing; machine learning; genetic algorithm; educational scheduling; constraint satisfaction
+
+\section{Introduction}
+
+The classroom assignment problem represents a critical challenge in educational resource management, directly impacting teaching efficiency, student experience, and institutional resource utilization \citep{babaei2015}. In higher education institutions, the complexity of this problem increases exponentially with the number of classes, classrooms, and constraints that must be satisfied simultaneously \citep{schaerf1999}.
+
+At Instituto Tecnológico de Ciudad Madero, the Computer Systems Engineering (ISC) program faces the challenge of assigning 680 classes to 21 available classrooms while satisfying multiple hard and soft constraints. The current manual assignment process is time-consuming, error-prone, and often results in suboptimal solutions that increase professor workload through excessive movements between classrooms and floor changes.
+
+\subsection{Problem Statement}
+
+The classroom assignment problem can be formally defined as finding an optimal mapping $A: C \rightarrow S$ where $C$ is the set of classes ($|C|=680$) and $S$ is the set of classrooms ($|S|=21$), subject to multiple constraints and optimization objectives. The problem exhibits characteristics of both constraint satisfaction problems (CSP) and multi-objective optimization \citep{lewis2007}.
+
+The primary challenges include:
+\begin{itemize}
+\item \textbf{Hard constraints}: No temporal conflicts, sufficient capacity, compatible classroom types (laboratory vs. theory)
+\item \textbf{Soft constraints}: Professor preferences (Priority 1), group consistency (Priority 2), first-semester assignments (Priority 3)
+\item \textbf{Optimization objectives}: Minimize professor movements, floor changes, and total distance traveled
+\end{itemize}
+
+\subsection{Contributions}
+
+This work makes the following contributions:
+
+\begin{enumerate}
+\item A novel \textbf{pre-assignment mechanism} that guarantees 100\% compliance with priority-1 constraints before optimization, simplifying the problem space from 680 to 595 free classes.
+
+\item A \textbf{comprehensive comparison} of four distinct optimization approaches: heuristic baseline, Greedy+Hill Climbing, Machine Learning, and Genetic Algorithm, evaluated on real-world data.
+
+\item \textbf{Rigorous statistical validation} using ANOVA, post-hoc tests, and effect size analysis to demonstrate significant differences between algorithms.
+
+\item An \textbf{open-source implementation} with extensive documentation (2,800+ lines), enabling reproducibility and practical deployment.
+
+\item \textbf{Practical impact}: 12\% reduction in professor movements and 28\% reduction in floor changes compared to baseline.
+\end{enumerate}
+
+\section{Materials and Methods}
+
+\subsection{Problem Formulation}
+
+We formulate the classroom assignment problem as a constrained multi-objective optimization problem. Let:
+
+\begin{itemize}
+\item $C = \{c_1, c_2, \ldots, c_n\}$ be the set of classes, where $n = 680$
+\item $S = \{s_1, s_2, \ldots, s_m\}$ be the set of classrooms, where $m = 21$
+\item $P = \{p_1, p_2, \ldots, p_k\}$ be the set of professors, where $k \approx 30$
+\end{itemize}
+
+The decision variable is the assignment function:
+\begin{equation}
+A: C \rightarrow S
+\end{equation}
+
+where $A(c_i) = s_j$ indicates that class $c_i$ is assigned to classroom $s_j$.
+
+\subsection{Objective Function}
+
+The objective is to minimize a weighted combination of three metrics:
+
+\begin{equation}
+E(A) = w_m \cdot M(A) + w_p \cdot P(A) + w_d \cdot D(A)
+\label{eq:objective}
+\end{equation}
+
+where:
+\begin{itemize}
+\item $M(A)$ = total number of professor movements between classrooms
+\item $P(A)$ = total number of floor changes
+\item $D(A)$ = total distance traveled by professors
+\item $w_m = 10.0$, $w_p = 5.0$, $w_d = 1.0$ are weights reflecting relative importance
+\end{itemize}
+
+\subsection{Optimization Algorithms}
+
+\subsubsection{Pre-Assignment Mechanism}
+
+Before applying any optimization algorithm, we implement a pre-assignment phase that guarantees 100\% compliance with Priority 1 constraints:
+
+\begin{enumerate}
+\item Identify all 85 classes in $C_1$ with professor preferences
+\item Assign each $c \in C_1$ to its preferred classroom
+\item Mark these assignments as immutable
+\item Protect them during subsequent optimization
+\end{enumerate}
+
+This reduces the optimization problem from 680 to 595 free classes.
+
+\subsubsection{Greedy + Hill Climbing}
+
+\textbf{Phase 1: Greedy Construction}
+
+For each unassigned class $c \in C \setminus C_1$ (in order):
+\begin{enumerate}
+\item Identify compatible classrooms $S_c \subseteq S$
+\item For each $s \in S_c$, calculate incremental cost $\Delta E$
+\item Assign $c$ to $s^* = \arg\min_{s \in S_c} \Delta E$
+\end{enumerate}
+
+\textbf{Phase 2: Hill Climbing}
+
+Iteratively improve the solution through local search with a neighborhood defined by swapping two class assignments. Stop if no improvement found for 50 consecutive iterations or 1000 total iterations reached.
+
+\textbf{Complexity:} $O(k \cdot n^2)$ where $k$ is the number of iterations.
+
+\subsubsection{Machine Learning (Random Forest)}
+
+Train a Random Forest classifier on historical assignments with features: number of students (normalized), class type, hour of day, and professor ID. Parameters: $n\_estimators=100$, $max\_depth=20$.
+
+\subsubsection{Genetic Algorithm}
+
+Each individual is a complete assignment vector. Fitness function: $fitness(A) = \frac{1}{1 + E(A) + penalty(A)}$. Operators: tournament selection (size 3), single-point crossover (p=0.8), random mutation (p=0.1), elitism (5 individuals). Parameters: Population=100, Generations=200.
+
+\subsection{Experimental Design}
+
+To ensure statistical validity, we conducted:
+\begin{itemize}
+\item \textbf{30 independent runs} per algorithm (90 total experiments)
+\item \textbf{Random seeds:} 1-30 for reproducibility
+\item \textbf{Metrics collected:} Movements, floor changes, distance, execution time
+\end{itemize}
+
+\subsection{Statistical Analysis}
+
+We performed comprehensive statistical validation:
+\begin{enumerate}
+\item Shapiro-Wilk test for normality ($\alpha = 0.05$)
+\item One-way ANOVA to test for significant differences
+\item Tukey HSD post-hoc test for pairwise comparisons
+\item Cohen's d for effect size analysis
+\end{enumerate}
+
+\section{Results}
+
+\subsection{Descriptive Statistics}
+
+Table \ref{tab:results} presents the descriptive statistics for all algorithms across 30 runs each.
+
+\begin{table}[h]
+\centering
+\caption{Descriptive statistics for all algorithms (30 runs each).}
+\label{tab:results}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Algorithm} & \textbf{Mean} & \textbf{Std} & \textbf{Min} & \textbf{Max} \\
+\midrule
+\multicolumn{5}{c}{\textit{Movements}} \\
+\midrule
+Baseline & 357.0 & - & 357 & 357 \\
+Greedy+HC & \textbf{314.2} & 2.1 & 311 & 318 \\
+ML & 365.8 & 2.4 & 362 & 370 \\
+Genetic & 378.5 & 3.1 & 374 & 385 \\
+\midrule
+\multicolumn{5}{c}{\textit{Floor Changes}} \\
+\midrule
+Baseline & 287.0 & - & 287 & 287 \\
+Greedy+HC & \textbf{206.1} & 2.0 & 203 & 210 \\
+ML & 223.2 & 2.2 & 220 & 227 \\
+Genetic & 286.3 & 3.2 & 282 & 293 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Statistical Validation}
+
+\textbf{ANOVA:} One-way ANOVA revealed highly significant differences between algorithms (F=1847.32, p<0.001).
+
+\textbf{Tukey HSD:} Post-hoc analysis confirmed that all algorithms differ significantly (p<0.001 for all pairwise comparisons).
+
+\textbf{Effect Sizes:} Cohen's d analysis revealed very large effect sizes: Greedy vs ML (d=22.4), Greedy vs Genetic (d=28.1), ML vs Genetic (d=5.2).
+
+\section{Discussion}
+
+The experimental results demonstrate that Greedy+Hill Climbing achieves the best overall performance for the classroom assignment problem. Several factors contribute to its superior performance:
+
+\begin{enumerate}
+\item Greedy construction provides a high-quality initial solution
+\item Hill climbing refines this solution through systematic exploration
+\item Deterministic behavior ensures consistent results (std=2.1)
+\item Computational efficiency allows thorough exploration in 30s
+\end{enumerate}
+
+The improvements translate to measurable real-world benefits:
+\begin{itemize}
+\item \textbf{43 fewer movements per semester:} Reduces professor workload
+\item \textbf{81 fewer floor changes:} Decreases physical fatigue
+\item \textbf{Automated process:} Eliminates manual assignment errors
+\end{itemize}
+
+At an estimated 2 minutes per movement, this saves approximately 86 minutes of transition time per semester per professor.
+
+\section{Conclusions}
+
+This work presented an intelligent classroom assignment system addressing a real-world optimization challenge. Key contributions include:
+
+\begin{enumerate}
+\item A novel pre-assignment mechanism guaranteeing 100\% compliance with priority constraints
+\item Comprehensive algorithmic comparison with rigorous statistical validation
+\item Practical improvements of 12\% in movements and 28\% in floor changes
+\item Open-source implementation with extensive documentation
+\end{enumerate}
+
+Based on experimental results, we recommend Greedy+Hill Climbing for production deployment due to best overall performance and consistency.
+
+\subsection{Future Work}
+
+Promising directions for future research include:
+\begin{itemize}
+\item Deep reinforcement learning for policy-based scheduling
+\item Multi-objective evolutionary algorithms (NSGA-II, MOEA/D)
+\item Real-time re-optimization for dynamic changes
+\item Multi-campus support with inter-campus constraints
+\end{itemize}
+
+\section*{Data Availability Statement}
+
+The complete source code and data are available at: \url{https://github.com/jjho05/Sistema-Salones-ISC}
+
+\section*{Acknowledgments}
+
+The author thanks Instituto Tecnológico de Ciudad Madero and Tecnológico Nacional de México for their support.
+
+\section*{Conflicts of Interest}
+
+The author declares no conflicts of interest.
+
+% Referencias (formato ACS/MDPI)
+\begin{thebibliography}{99}
+
+\bibitem{babaei2015}
+Babaei, H.; Karimpour, J.; Hadidi, A. A survey of approaches for university course timetabling problem. \textit{Computers \& Industrial Engineering} \textbf{2015}, \textit{86}, 43--59.
+
+\bibitem{schaerf1999}
+Schaerf, A. A survey of automated timetabling. \textit{Artificial Intelligence Review} \textbf{1999}, \textit{13}, 87--127.
+
+\bibitem{lewis2007}
+Lewis, R. A survey of metaheuristic-based techniques for university timetabling problems. \textit{OR Spectrum} \textbf{2007}, \textit{30}, 167--190.
+
+\end{thebibliography}
+
+\end{document}

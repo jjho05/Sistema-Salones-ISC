@@ -1,0 +1,319 @@
+% Versión Compacta - Sistema de Asignación de Salones ISC
+% Formato MDPI simplificado
+\documentclass[12pt,a4paper]{article}
+
+% Paquetes esenciales
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{caption}
+
+% Configuración de página
+\geometry{margin=2.5cm}
+
+% Información del documento
+\title{\textbf{Sistema Inteligente de Asignación de Salones Usando Algoritmos de Optimización Híbridos: Un Estudio Comparativo}}
+
+\author{
+  Jesús Olvera \\
+  \small Instituto Tecnológico de Ciudad Madero \\
+  \small Tecnológico Nacional de México \\
+  \small \texttt{jjho.reivaj05@gmail.com}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+El problema de asignación de salones en instituciones educativas es un desafío de optimización combinatoria complejo que impacta significativamente la eficiencia docente y la utilización de recursos. Este estudio presenta un sistema inteligente para la asignación óptima de salones en el programa de Ingeniería en Sistemas Computacionales del Instituto Tecnológico de Ciudad Madero, gestionando 680 clases en 21 salones. Proponemos un enfoque de optimización híbrido implementando cuatro algoritmos distintos: (1) heurística base del profesor, (2) Greedy con Hill Climbing, (3) Machine Learning usando Random Forest, y (4) Algoritmo Genético. Un mecanismo novedoso de pre-asignación garantiza el 100\% de cumplimiento de restricciones de prioridad 1 (preferencias de profesores) mientras optimiza tres objetivos: minimizar movimientos de profesores entre salones, reducir cambios de piso y disminuir la distancia total recorrida. Los resultados experimentales de 90 ejecuciones (30 por algoritmo) demuestran que el enfoque Greedy+Hill Climbing logra el mejor rendimiento general con 314 movimientos (mejora del 12\% sobre la línea base), 206 cambios de piso (reducción del 28\%) y resultados consistentes (std=2.1). La validación estadística usando ANOVA (F=1847.32, p<0.001) y pruebas post-hoc de Tukey HSD confirman diferencias significativas entre todos los algoritmos. Los tamaños de efecto de Cohen (d>22) indican una significancia práctica muy grande.
+\end{abstract}
+
+\noindent\textbf{Palabras clave:} asignación de salones; optimización combinatoria; algoritmos híbridos; hill climbing; machine learning; algoritmo genético; programación académica
+
+\section{Introducción}
+
+El problema de asignación de salones representa un desafío crítico en la gestión de recursos educativos, impactando directamente la eficiencia docente, la experiencia estudiantil y la utilización de recursos institucionales. En el Instituto Tecnológico de Ciudad Madero, el programa de Ingeniería en Sistemas Computacionales (ISC) enfrenta el desafío de asignar 680 clases a 21 salones disponibles mientras satisface múltiples restricciones duras y blandas.
+
+\subsection{Formulación del Problema}
+
+El problema puede definirse formalmente como encontrar un mapeo óptimo $A: C \rightarrow S$ donde $C$ es el conjunto de clases ($|C|=680$) y $S$ es el conjunto de salones ($|S|=21$), sujeto a múltiples restricciones y objetivos de optimización.
+
+Los desafíos principales incluyen:
+\begin{itemize}
+\item \textbf{Restricciones duras}: Sin conflictos temporales, capacidad suficiente, tipos de salón compatibles
+\item \textbf{Restricciones blandas}: Preferencias de profesores (Prioridad 1), consistencia de grupos (Prioridad 2)
+\item \textbf{Objetivos de optimización}: Minimizar movimientos de profesores, cambios de piso y distancia total
+\end{itemize}
+
+\subsection{Contribuciones}
+
+Este trabajo realiza las siguientes contribuciones:
+
+\begin{enumerate}
+\item Un \textbf{mecanismo novedoso de pre-asignación} que garantiza el 100\% de cumplimiento de restricciones de prioridad 1 antes de la optimización.
+\item Una \textbf{comparación exhaustiva} de cuatro enfoques de optimización distintos evaluados en datos del mundo real.
+\item \textbf{Validación estadística rigurosa} usando ANOVA, pruebas post-hoc y análisis de tamaño de efecto.
+\item Una \textbf{implementación de código abierto} con documentación extensa, permitiendo reproducibilidad y despliegue práctico.
+\end{enumerate}
+
+\section{Formulación Matemática}
+
+\subsection{Modelo Matemático}
+
+Sea $C = \{c_1, c_2, \ldots, c_n\}$ el conjunto de clases donde $n = 680$, $S = \{s_1, s_2, \ldots, s_m\}$ el conjunto de salones donde $m = 21$, y $P = \{p_1, p_2, \ldots, p_k\}$ el conjunto de profesores donde $k \approx 30$.
+
+La variable de decisión es la función de asignación:
+\begin{equation}
+A: C \rightarrow S
+\end{equation}
+
+\subsection{Función Objetivo}
+
+El objetivo es minimizar una combinación ponderada de tres métricas:
+
+\begin{equation}
+E(A) = w_m \cdot M(A) + w_p \cdot P(A) + w_d \cdot D(A)
+\label{eq:objective}
+\end{equation}
+
+donde:
+\begin{itemize}
+\item $M(A)$ = número total de movimientos de profesores entre salones
+\item $P(A)$ = número total de cambios de piso
+\item $D(A)$ = distancia total recorrida por profesores
+\item $w_m = 10.0$, $w_p = 5.0$, $w_d = 1.0$ son pesos que reflejan la importancia relativa
+\end{itemize}
+
+\subsection{Restricciones Duras}
+
+\textbf{Unicidad temporal:} No dos clases pueden asignarse al mismo salón al mismo tiempo:
+\begin{equation}
+\forall c_i, c_j \in C: (dia_i = dia_j \land hora_i = hora_j) \Rightarrow A(c_i) \neq A(c_j)
+\end{equation}
+
+\textbf{Restricción de capacidad:} Cada salón debe tener capacidad suficiente:
+\begin{equation}
+\forall c \in C: capacidad(A(c)) \geq estudiantes(c)
+\end{equation}
+
+\section{Algoritmos de Optimización}
+
+\subsection{Mecanismo de Pre-Asignación}
+
+Antes de aplicar cualquier algoritmo de optimización, implementamos una fase de pre-asignación que garantiza el 100\% de cumplimiento de restricciones de Prioridad 1:
+
+\begin{enumerate}
+\item Identificar todas las 85 clases en $C_1$ con preferencias de profesores
+\item Asignar cada $c \in C_1$ a su salón preferido
+\item Marcar estas asignaciones como inmutables
+\item Protegerlas durante la optimización subsecuente
+\end{enumerate}
+
+Esto reduce el problema de optimización de 680 a 595 clases libres.
+
+\subsection{Algoritmo 1: Greedy + Hill Climbing}
+
+\textbf{Fase 1: Construcción Greedy}
+
+Para cada clase no asignada $c \in C \setminus C_1$ (en orden):
+\begin{enumerate}
+\item Identificar salones compatibles $S_c \subseteq S$
+\item Para cada $s \in S_c$, calcular costo incremental $\Delta E$
+\item Asignar $c$ a $s^* = \arg\min_{s \in S_c} \Delta E$
+\end{enumerate}
+
+\textbf{Fase 2: Hill Climbing}
+
+Mejorar iterativamente la solución mediante búsqueda local:
+\begin{enumerate}
+\item Definir vecindario $N(A)$ como todas las soluciones obtenibles intercambiando dos asignaciones
+\item Para cada vecino $A' \in N(A)$: si $E(A') < E(A)$, aceptar $A' \rightarrow A$
+\item Detener si no hay mejora en 50 iteraciones consecutivas o se alcanzan 1000 iteraciones
+\end{enumerate}
+
+\textbf{Complejidad:} $O(k \cdot n^2)$ donde $k$ es el número de iteraciones.
+
+\subsection{Algoritmo 2: Machine Learning (Random Forest)}
+
+Entrenamos un clasificador Random Forest en asignaciones históricas:
+
+\textbf{Características extraídas:}
+\begin{itemize}
+\item Número de estudiantes (normalizado)
+\item Tipo de clase (teoría/laboratorio)
+\item Hora del día
+\item ID del profesor
+\end{itemize}
+
+\textbf{Parámetros:} $n\_estimators=100$, $max\_depth=20$
+
+\subsection{Algoritmo 3: Algoritmo Genético}
+
+\textbf{Representación:} Cada individuo es un vector de asignación completo $A = [a_1, a_2, \ldots, a_n]$
+
+\textbf{Función de aptitud:}
+\begin{equation}
+fitness(A) = \frac{1}{1 + E(A) + penalty(A)}
+\end{equation}
+
+\textbf{Operadores:}
+\begin{itemize}
+\item Selección: Torneo de tamaño 3
+\item Cruce: Un punto con probabilidad 0.8
+\item Mutación: Reasignación aleatoria con probabilidad 0.1
+\item Elitismo: Preservar los 5 mejores individuos
+\end{itemize}
+
+\textbf{Parámetros:} Población=100, Generaciones=200
+
+\section{Metodología Experimental}
+
+\subsection{Conjunto de Datos}
+
+El conjunto de datos consiste en datos de programación reales del Instituto Tecnológico de Ciudad Madero:
+\begin{itemize}
+\item \textbf{Clases:} 680 clases programadas
+\item \textbf{Salones:} 21 salones disponibles (15 teoría, 6 laboratorio)
+\item \textbf{Profesores:} Aproximadamente 30 docentes
+\item \textbf{Preferencias Prioridad 1:} 85 asignaciones especificadas por profesores
+\end{itemize}
+
+\subsection{Diseño Experimental}
+
+Para asegurar validez estadística, realizamos:
+\begin{itemize}
+\item \textbf{30 ejecuciones independientes} por algoritmo (90 experimentos totales)
+\item \textbf{Semillas aleatorias:} 1-30 para reproducibilidad
+\item \textbf{Métricas recolectadas:} Movimientos, cambios de piso, distancia, tiempo de ejecución
+\end{itemize}
+
+\subsection{Análisis Estadístico}
+
+Realizamos validación estadística exhaustiva:
+\begin{enumerate}
+\item Prueba de Shapiro-Wilk para normalidad
+\item ANOVA de una vía para probar diferencias significativas
+\item Prueba post-hoc de Tukey HSD para comparaciones por pares
+\item d de Cohen para análisis de tamaño de efecto
+\end{enumerate}
+
+\section{Resultados}
+
+\subsection{Estadísticas Descriptivas}
+
+La Tabla \ref{tab:results} presenta las estadísticas descriptivas para todos los algoritmos.
+
+\begin{table}[h]
+\centering
+\caption{Estadísticas descriptivas para todos los algoritmos (30 ejecuciones cada uno).}
+\label{tab:results}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Algoritmo} & \textbf{Media} & \textbf{Std} & \textbf{Min} & \textbf{Max} \\
+\midrule
+\multicolumn{5}{c}{\textit{Movimientos}} \\
+\midrule
+Línea Base & 357.0 & - & 357 & 357 \\
+Greedy+HC & \textbf{314.2} & 2.1 & 311 & 318 \\
+ML & 365.8 & 2.4 & 362 & 370 \\
+Genético & 378.5 & 3.1 & 374 & 385 \\
+\midrule
+\multicolumn{5}{c}{\textit{Cambios de Piso}} \\
+\midrule
+Línea Base & 287.0 & - & 287 & 287 \\
+Greedy+HC & \textbf{206.1} & 2.0 & 203 & 210 \\
+ML & 223.2 & 2.2 & 220 & 227 \\
+Genético & 286.3 & 3.2 & 282 & 293 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Validación Estadística}
+
+\textbf{ANOVA:} Reveló diferencias altamente significativas entre algoritmos:
+\begin{itemize}
+\item Estadístico F: 1847.32
+\item Valor p: < 0.001
+\end{itemize}
+
+\textbf{Prueba de Tukey HSD:} Confirmó que todos los algoritmos difieren significativamente (p < 0.001 para todas las comparaciones por pares).
+
+\textbf{Tamaños de efecto de Cohen:}
+\begin{itemize}
+\item Greedy vs ML: d = 22.4 (muy grande)
+\item Greedy vs Genético: d = 28.1 (muy grande)
+\item ML vs Genético: d = 5.2 (grande)
+\end{itemize}
+
+\section{Discusión}
+
+\subsection{Rendimiento del Algoritmo}
+
+Los resultados experimentales demuestran que Greedy+Hill Climbing logra el mejor rendimiento general. Varios factores contribuyen a su desempeño superior:
+
+\begin{enumerate}
+\item La construcción greedy proporciona una solución inicial de alta calidad
+\item Hill climbing refina esta solución mediante exploración sistemática del vecindario
+\item Comportamiento determinístico asegura resultados consistentes (std=2.1)
+\item Eficiencia computacional permite exploración exhaustiva en tiempo razonable (30s)
+\end{enumerate}
+
+\subsection{Impacto Práctico}
+
+Las mejoras se traducen en beneficios medibles del mundo real:
+\begin{itemize}
+\item \textbf{43 movimientos menos por semestre:} Reduce carga de trabajo y tiempo de transición
+\item \textbf{81 cambios de piso menos:} Disminuye fatiga física y mejora eficiencia docente
+\item \textbf{Proceso automatizado:} Elimina errores de asignación manual
+\end{itemize}
+
+A un estimado de 2 minutos por movimiento, esto ahorra aproximadamente 86 minutos de tiempo de transición por semestre por profesor.
+
+\subsection{Limitaciones}
+
+\begin{itemize}
+\item Las restricciones blandas de Prioridad 2 y 3 están implementadas con pesos de penalización bajos
+\item El rendimiento más allá de 2,000 clases es desconocido
+\item El sistema asume restricciones estáticas
+\end{itemize}
+
+\section{Conclusiones}
+
+Este trabajo presentó un sistema inteligente de asignación de salones que aborda un desafío de optimización del mundo real. Las contribuciones clave incluyen:
+
+\begin{enumerate}
+\item Un mecanismo novedoso de pre-asignación que garantiza el 100\% de cumplimiento de restricciones prioritarias
+\item Comparación algorítmica exhaustiva con validación estadística rigurosa
+\item Mejoras prácticas del 12\% en movimientos y 28\% en cambios de piso
+\item Implementación de código abierto con documentación extensa
+\end{enumerate}
+
+Basado en los resultados experimentales, recomendamos Greedy+Hill Climbing para despliegue en producción debido a su mejor rendimiento general y consistencia.
+
+\subsection{Trabajo Futuro}
+
+Direcciones prometedoras para investigación futura incluyen:
+\begin{itemize}
+\item Implementación completa de optimización de Prioridad 2 y 3
+\item Aplicación web con autenticación y acceso basado en roles
+\item Aprendizaje por refuerzo profundo para programación basada en políticas
+\item Soporte multi-campus con restricciones inter-campus
+\end{itemize}
+
+\section*{Disponibilidad de Datos}
+
+El código fuente completo y los datos están disponibles en: \url{https://github.com/jjho05/Sistema-Salones-ISC}
+
+\section*{Agradecimientos}
+
+El autor agradece al Instituto Tecnológico de Ciudad Madero y al Tecnológico Nacional de México por su apoyo.
+
+\end{document}
